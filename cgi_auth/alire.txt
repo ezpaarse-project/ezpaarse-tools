@@ -1,0 +1,43 @@
+CGI d'authentification qui fonctionne sur le modèle proposé par Chris Zagar pour ezproxy i.e. le ticket, tel qu'il est
+rendu a le format pour ezproxy. 
+Surtout utile avec le SSO CAS et un service LDAP mais peut n'utiliser que le LDAP.
+Intérêt : 
+- Possibilités de configuration des accès par combinaison de champs
+- Gestion d'un log permettant de tracer des profils usager pour les statistiques
+- Outil de simulation pour vérifier ses accès en fonction de son identité / de son lieu d'interrogation.
+- Affichage des IP permettant un accès anonyme aux ressources.
+
+Utilise des modules  libs.
+
+* Le CGI est lancé par index.php (fichier par défaut à la racine du service en configuration apache).
+* outil de diagnostic de l'administrateur verif.php.
+* page de diagnostic pour les usagers diagnostic.php
+* test_IP.php page indiquant les postes publics ouvrant un accès anonyme.
+
+
+*** A adapter a lenvironnement local 
+
+acces.conf.php : 
+	qui définit le(s) CAS et/ou LDAP d'authentification + LDAP et/ou Bases de données en 
+	complément d'information
+	Indiquer la situation de libs par rapport à acces.conf.php lui-même.
+regles_groupage.php :
+	qui définit précisément les groupes au sens ezproxy et les information à garder 
+	comme profil des usagers
+page_identifieur.php :
+	fonction PHP qui personnalise la page utilisée pour demander à l'usager quel est son service 
+	d'authentification.
+page_sans_acces.php :
+	page qui indique à l'usager que son profil ne lui donne pas droit aux ressources.
+page_formulaire_verif.php :
+	personnalisation du formulaire utilisé l'outil de vérification des accès d'un usager quelconque.
+	
+ok.png , bandeau_titre.jpg
+	bouton de validation et image d'habillage
+
+	
+Autres composants nécessaires :
+realise_regles.php , acces.lib.php , valid_acces.php
+principal.php , principal_test_IP.php
+
+locale : fichiers pour la traduction (deux langues actuellement français/anglais)
