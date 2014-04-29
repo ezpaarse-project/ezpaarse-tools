@@ -236,5 +236,7 @@ function message ($no,$p) {
 			return ("Lignes lue: $p0 ; lignes ecrite: $p1\n");
 	}
 }
-include_once './gcsv_tri.corps.php';
+$ce_repertoire = dirname(__FILE__);
+
+include_once ("$ce_repertoire/gcsv_tri.corps.php");
 ?>

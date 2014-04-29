@@ -318,5 +318,7 @@ function message ($no,$p=''){
 			return ("$p0 source read ; $p1 result lines written.\n");
 	}
 }
-include_once("./gcsv_injecteRef.corps.php");
+$ce_repertoire = dirname(__FILE__);
+
+include_once ("$ce_repertoire/gcsv_injecteRef.corps.php");
 ?>

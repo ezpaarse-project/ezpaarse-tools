@@ -229,5 +229,7 @@ function message ($no,$p) {
 			return ("Lines in: $p0 / out: $p1\n");
 	}
 }
-include_once './gcsv_tri.corps.php';
+$ce_repertoire = dirname(__FILE__);
+
+include_once ("$ce_repertoire/gcsv_tri.corps.php");
 ?>
