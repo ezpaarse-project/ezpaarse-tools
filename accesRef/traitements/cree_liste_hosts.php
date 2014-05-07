@@ -1,14 +1,16 @@
 #!/usr/bin/php
 <?php
 /*
- * V1.2 create conflit and general files . conflits contains the conflicts between 
- * 	database definition and general reflects the links SPU -> Hosts and Domains. 
+ * V1.3 
  * 
  * Create the ../hosts_domains/liste_hosts file used to rewrite URL with or without 
  * ezproxy suffix. It needs all your config file to be in ../hosts_domains directory.
  * Every one must have .txt extension to be parsed.   
  * V1.0 Append file with host domain conflicts detected
- * V1.1 Same parsing order as ezproxy to affect good index / name SPU to doubled definitions   
+ * V1.1 Same parsing order as ezproxy to affect good index / name SPU to doubled definitions
+ * V1.2  create conflits and general files . conflits contains the conflicts between 
+ * 	database definition and general reflects the links SPU -> Hosts and Domains.  
+ * V1.3 quickness upgrade  
  *
  * Crée le fichier ../hosts_domains/liste_hosts à partir de vos fichier de configuration 
  * mis dans le même répertoire et dont le nom DOIT se terminer par .txt.  
@@ -18,6 +20,7 @@
  * V1.1 analyse des fichiers identique à celle de ezproxy pour indiquer LE bon SPU avec son
  * 		n° à chaque	conflit trouvé.
  * V1.2 création du fichier des conflits et du fichier general (liste des hosts par SPU)
+ * V1.3 accélération traitement
  */
 
 $ce_repertoire = dirname(__FILE__);
@@ -26,7 +29,6 @@ $fic_liste.=".test";
 
 
 
-$tab_hosts=array(); $tab_conflits = array();
 $tab_titre=array();$tab_spu=array(); $tab_HD=array();
 $spu_cou = "";  $titre_cou = "";
 $no_spu=-1;
@@ -46,7 +48,8 @@ $liste_clauses_valides = array	('includefile'
 								,'d','dj','domain'
 								,'t','title'
 								);
-
+$tab_gen = array();
+$tab_domain = array();
 while (($une_ligne=lit_ligne ())!==false){
 	$une_ligne=trim($une_ligne);
 	$type = strtoupper(substr($une_ligne,0,1));
@@ -89,69 +92,61 @@ while (($une_ligne=lit_ligne ())!==false){
 		continue;
 	}
 	$une_ligne=$matches[1];
-
-	$no_url = count($tab_HD[$no_spu]);
-	$tab_HD[$no_spu][] = $une_ligne;
+	$cle = cunu_cle($une_ligne);
 	
-	$enr_ref = array	('lg'=>strlen($une_ligne)
-						,'url'=>$une_ligne
-						,'no_url'=>$no_url
+	$no_url = count($tab_HD[$no_spu]);
+	$tab_HD[$no_spu][] = $cle;
+	
+	if ($type=="D"){
+		if (!isset($tab_domain[$cle]))$tab_domain[$cle]=array();
+		$tab_domain[$cle][]=$no_spu; 
+	}
+	$enr_ref = array	('no_url'=>$no_url
 						,'no_spu'=>$no_spu
 						,'fic'=>$un_fic
 						,'type'=>$type
 						,'ss_type'=>$ss_type
 						);
-	$a_ajouter=true;
-	for ($i=0;$i<count($tab_hosts);$i++) {
-		$no_spu_prec = $tab_hosts[$i]['no_spu'];
-		$no_url_prec = $tab_hosts[$i]['no_url'];
-		$conflit_potentiel = ($no_spu_prec!=$no_spu && !in_array($no_spu_prec, $liste_conflits));
-		$pref_old=$pref=""; 
-		if ($tab_hosts[$i]['lg']>$enr_ref['lg']) {
-			if (strpos($tab_hosts[$i]['url'], $une_ligne)){
-				$pref_old='E'.$no_spu;$pref='';
-				if ($conflit_potentiel){
-						if (!isset($tab_conflits[$no_spu_prec])) 
-							$tab_conflits[$no_spu_prec]=array(); 
-						$tab_conflits[$no_spu_prec][] =  
-							ecrit_enr($tab_hosts[$i]). ' -&- '.ecrit_enr($enr_ref);
-						$pref_old.='C'; $pref.='C';
-						$liste_conflits[]=$no_spu_prec;
-				} 
-				$tab_HD[$no_spu_prec][$no_url_prec]=
-					$pref_old.$tab_HD[$no_spu_prec][$no_url_prec];
-				$tab_HD[$no_spu][$no_url] =	$pref.$tab_HD[$no_spu][$no_url];
-				$tab_hosts[$i]=$enr_ref;
-				$a_ajouter=false;
-				break;
-			}
-		} else {
-			if (strpos($une_ligne,$tab_hosts[$i]['url'])!==false){
-				if ($une_ligne==$tab_hosts[$i]['url']) $pref='DB'.$no_spu_prec;
-				else $pref='E'.$no_spu_prec;
-				if ($conflit_potentiel){
-					if (!isset($tab_conflits[$no_spu_prec])) $tab_conflits[$no_spu_prec]=array(); 
-					$tab_conflits[$no_spu_prec][] = 
-						ecrit_enr($tab_hosts[$i]) . ' -&- '.ecrit_enr($enr_ref);
-					$pref_old.='C'; $pref.='C';
-					$liste_conflits[]=$no_spu_prec;
+	if (!isset ($tab_gen [$cle])) 
+		$tab_gen [$cle]=array('orig'=>$une_ligne,'defs'=>array());
+	$tab_gen[$cle]['defs'][] = $enr_ref;
+}
+$v1 = ksort($tab_gen );
+$tab_hosts=array(); $tab_conflits = array();
+
+$domaine_cou = ""; $spu_domaine=-1;
+foreach ($tab_gen  as $cle=>$struct){
+	$lurl = $struct['orig'];
+	$enrs = $struct['defs']; $enr = $enrs[0];
+	$no_spu_cou = $enr['no_spu'];
+	$est_host=($enr['type']=='H' || $enr['type']=='U');
+	$i = 1; 
+	while ($i<count($struct['defs']) ){
+		$enr = $enrs[$i];
+		if ($no_spu_cou != $enr['no_spu']){
+			ajout_conflit ($no_spu_cou,$enr['no_spu'],$lurl);
+		} 
+		$est_host=($enr['type']=='H' || $enr['type']=='U');
+		$i++;
+	}
+	if ($est_host){
+		$tab_hosts[]=$lurl;
+		$ipos = 0;
+		while (($ipos=strpos($cle, '|',$ipos))!==false){
+			if (isset($tab_domain[substr($cle,0,$ipos)])){
+				foreach ($tab_domain[substr($cle,0,$ipos)] as $un_spu) {
+					if ($no_spu_cou!=$un_spu ){
+						ajout_conflit ($no_spu_cou,$un_spu,$lurl);
+					}
 				}
-				$tab_HD[$no_spu_prec][$no_url_prec]=
-					$pref_old.$tab_HD[$no_spu_prec][$no_url_prec];
-				$tab_HD[$no_spu][$no_url] =	$pref.$tab_HD[$no_spu][$no_url];
-				$a_ajouter=false;
-				break;		
-			}		
+			break;
+			}
+			$ipos++;
 		}
 	}
-	if ($a_ajouter) $tab_hosts[]=$enr_ref;
 }
-$urls = array();
-foreach ($tab_hosts as $un_host){
-	$urls[]=$un_host['url'];
-}
-$vrai = sort($urls);
-$r = file_put_contents($dir_sources.'/'.$fic_liste, implode("\n", $urls));
+$vrai = sort($tab_hosts);
+$r = file_put_contents($dir_sources.'/'.$fic_liste, implode("\n", $tab_hosts));
 
 $fconflits = "$dir_sources/conflits";
 if (file_exists($fconflits)) unlink($fconflits);
@@ -159,7 +154,12 @@ $fd = fopen($fconflits, 'w');
 
 for ($no_spu=0;$no_spu<count($tab_spu);$no_spu++){
 	if (!isset($tab_conflits[$no_spu])) continue;
-	foreach ($tab_conflits[$no_spu] as $l){
+	for ($lautre=0;$lautre<count($tab_spu);$lautre++){
+		if (!isset($tab_conflits[$no_spu][$lautre])) continue;
+		$les_urls = $tab_conflits[$no_spu][$lautre];
+		$l = " $no_spu  ".$tab_titre[$no_spu]. ' -&- '.
+				" $lautre  ".$tab_titre[$lautre]."\n\t...".
+				implode ("\n\t...",$les_urls)."\n";
 		fwrite($fd, "$l\n");
 	}
 }
@@ -169,19 +169,41 @@ $fgen = "$dir_sources/general";
 if (file_exists($fgen)) unlink($fgen);
 $fd = fopen($fgen, 'w');
 for ($no_spu=0;$no_spu<count($tab_spu);$no_spu++){
-	$l = substr('    '.$no_spu,-5).' '.$tab_titre[$no_spu]."\n     ".$tab_spu[$no_spu];
+	$l = substr('    '.$no_spu,-5).' '.$tab_spu[$no_spu]. 'T='.$tab_titre[$no_spu];
 	fwrite($fd, "$l\n");
-	foreach ($tab_HD[$no_spu] as $url){
-		fwrite($fd, "        + $url\n");
+	foreach ($tab_HD[$no_spu] as $cle){
+		$v=ecrit_enr($cle ,$no_spu);
+		fwrite($fd, "        + $v\n");
 	}
 }
 fclose($fd);
 
+function cunu_cle ($l){
+	$revl = strrev($l);
+	$tcomp = explode ('.',$revl);
+	for ($i =0;$i<count($tcomp);$i++){
+		$tcomp[$i] = strrev($tcomp[$i]);
+	}
+	return (implode('|', $tcomp));
+}
 
-function ecrit_enr($enr){
-	global $tab_spu,$tab_titre;
-	$debut = ' '.$enr['no_spu'].' T='.$tab_titre[$enr['no_spu']];
-	return ($debut." (".$enr['fic'].") ".$enr['url'].'['.$enr['type'].$enr['ss_type']."]");
+function ecrit_enr($cle ,$no_spu_cou){
+	global $tab_gen;
+	$debut = $tab_gen[$cle]['orig'];
+	$milieu = ' In '; $milieu = "";
+	$suite = ' V. '; $suite = "";
+	foreach ($tab_gen[$cle]['defs'] as $enr){
+		$no_spu = $enr['no_spu'];
+		$un_fic = $enr['fic'];
+		$type=$enr['type'].$enr['ss_type'];
+		if ($no_spu==$no_spu_cou)
+			$milieu .= ", ($un_fic) [$type]";
+		else 
+			$suite .= ", $no_spu ($un_fic) [$type]";	
+	}
+	$res = $debut." In ".substr($milieu,1);
+	if ($suite) $res.= " ++ ".substr($suite,1);
+	return ($res);
 }
 
 function lit_ligne (){
@@ -207,5 +229,11 @@ function inclure_fichier($nom_fichier){
 		$fpoint[$ipoint]=$fs=$fessai;
 	}
 }
-
+function ajout_conflit ($spu1,$spu2,$lurl){
+	global $tab_conflits;
+	if ($spu1>$spu2) {$s = $spu2; $spu2=$spu1;$spu1=$s;}
+	if (!isset($tab_conflits[$spu1])) $tab_conflits[$spu1]=array();
+	if (!isset($tab_conflits[$spu1][$spu2])) $tab_conflits[$spu1][$spu2]=array();
+	if (!in_array($lurl, $tab_conflits[$spu1][$spu2])) $tab_conflits[$spu1][$spu2][]= $lurl;
+}
 ?>

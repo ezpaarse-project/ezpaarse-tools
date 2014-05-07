@@ -87,7 +87,7 @@ while (($une_ligne=lit_ligne ())!==false){
 						,'type'=>$type
 						,'ss_type'=>$ss_type
 						);
-	$cle = strrev($une_ligne);
+	$cle = cunu_cle ($une_ligne);
 	if (!isset ($tab_hosts[$cle])) 
 		$tab_hosts[$cle]=array('orig'=>$une_ligne,'defs'=>array());
 	$tab_hosts[$cle]['defs'][] = $enr_ref; 
@@ -114,19 +114,30 @@ foreach ($tab_hosts as $cle=>$tdefs){
 $fconflits = "$dir_sources/status";
 if (file_exists($fconflits)) unlink($fconflits);
 $fd = fopen($fconflits, 'w');
+for ($i=0;$i<count($tab_spu);$i++){
+	$debut = substr('     '.$i,-5);
+	fwrite($fd, "$debut = ".$tab_spu[$i]." : ".$tab_titre[$i]."\n");	
+}
+fwrite($fd, "\t\t=========\n\t\t Hosts + Domains\n\t\t=========\n\n");	
 
 foreach ($tab_hosts as $cle=>$infos){
-	$tcomp = explode('.', $cle);
-	$vrech  = ''; 
-	foreach ($tcomp as $member){
-			$vrech.=strrev($member)."\t";
-	} 
-	$vrech=substr($vrech, 0,-1);
-	fwrite($fd, "$vrech = ".$infos['orig']."\n");
-	
-	foreach ($infos['defs'] as $enr){
-		fwrite($fd, ecrit_enr($enr)."\n");
+	$complement = "";
+	if (count ($infos['defs'])>1) {
+		foreach ($infos['defs'] as $enr){
+			$complement.= "\n\t...\t".ecrit_enr($enr);
+		}
+	} else {
+		$enr = $infos['defs'][0];
+		$complement=ecrit_enr($enr);
+/*		
+		$no_spu = $enr['no_spu'];
+		$fic = $fichiers[$enr['no_fic']];
+		$type=$enr['type'].$enr['ss_type'];
+		$complement = " SPU=$no_spu ($fic) [$type]";
+*/		
 	}
+	fwrite($fd, "$cle = ".$infos['orig']."$complement\n");
+	
 }
 fclose($fd);
 
@@ -134,10 +145,18 @@ fclose($fd);
 function ecrit_enr($enr){
 	global $tab_spu,$tab_titre,$fichiers;
 	$no_spu = $enr['no_spu'];
-	$debut = "\t...\t SPU $no_spu = ".$tab_spu[$no_spu].' T='.$tab_titre[$no_spu];
+	$debut = " SPU $no_spu";// = ".$tab_spu[$no_spu].' T='.$tab_titre[$no_spu];
 	return ($debut." (".$fichiers[$enr['no_fic']].") ".'['.$enr['type'].$enr['ss_type']."]");
 }
 
+function cunu_cle ($l){
+	$revl = strrev($l);
+	$tcomp = explode ('.',$revl);
+	for ($i =0;$i<count($tcomp);$i++){
+		$tcomp[$i] = strrev($tcomp[$i]);
+	}
+	return (implode('|', $tcomp));
+}
 function lit_ligne (){
 	global $ipoint,$fpoint,$fichiers,$fs,$ficpile  ,$no_fic;
 	if (($ligne=fgets($fs))!== false) return ($ligne);
