@@ -1,4 +1,3 @@
-#!/usr/bin/php
 <?php
 /*
  * Implantation :
@@ -15,9 +14,10 @@ $libs = $racinePhys."/libs";
  * en pipe). Le tri s'effectue sur une ou plusieurs colonne des données source et cette clé est présente 
  * en tête de chaque ligne du résultat. 
  * Les lignes peuvent être complétées par :
-- des colonnes indiquée (-col). Il y aura autant de ligne de même clé que de valeurs pour ces colonnes. 
-- le nombre de lignes de l'original contenant la clé en tête (-cpt)
-- en l'absence de -col et -cpt, la liste des couples fichier_source:numero_ligne où se trouve la clé.  
+- des colonnes indiquée (-col). Il y aura autant de ligne de même clé que de valeurs pour ces colonnes.
+- la liste des couples fichier_source:numero_ligne où se trouve la clé (option -pos).  
+- le nombre de lignes de l'original contenant la clé en tête (option -cpt)
+- en l'absence de -col, -pos et -cpt, l'ensembles des colonnes inutilisées pour le tri.  
 Si aucun fichier n'est indiqué en source (-src), c'est l'entrée standard qui est utilisée.
 Si aucun fichier n'est indiqué en résultat (-res), c'est la sortie standard qui est utilisée.
 Si aucun fichier n'est indiqué pour les lignes non intéressante (-rej), elles sont oubliées.
@@ -32,7 +32,7 @@ Si aucun fichier n'est indiqué pour les lignes non intéressante (-rej), elles so
 $parametres_possibles=array('-aide','-help','-h','-xtrt','-max','-tmax'
 							,'-hd','+hd','-hd1','+hd1'
 							,'-sep','-glu','-res','-colt','-col','-src','-par'
-							,"-test" ,"+test" ,"-cpt","-multi",'-u','-uk'); 
+							,"-test" ,"+test" ,"-cpt","-pos","-multi",'-u','-uk'); 
 /* Tableau  de couple de caractères utilisés en début et fin de valeur unitaire 
  * notamment afin que les valeurs puissent contenir des caratères séparateur
  * ex. cuple [] pour le séparateur , 
@@ -129,7 +129,7 @@ if (count($argv)<1) {
 $sources=array(); 
 $tri_col = $cols=array(); 
  $en_col ='';$sep=$glu="";$maxval=$tmax=$mmax=0;
-$test=$bavard=$emploi=false; $mem_cpt=false;
+$test=$bavard=$emploi=false; $mem_cpt_pos='';
 $fic_res=$fic_par=""; // $includes=array();
 
 // traitement du header :
@@ -148,7 +148,7 @@ foreach ($argv as $v_arg){
 		$un_arg = substr($v_arg, 1);
 		if (!in_array($v_arg, $parametres_possibles)) {
 			$err=true;
-			$echo_test .= message ('ArgInc',array($v_arg,implode(',',$parametres_possibles)));
+			$echo_test .= message ('ArgInc',$v_arg);
 			continue;
 		}
 		if ($bavard) echo message('par=',$un_arg);
@@ -165,8 +165,25 @@ foreach ($argv as $v_arg){
 				$prochain = "";
 				break;
 			case "cpt" :
-				$mem_cpt=true; 
-				$echo_test.= message ('par_cpt');
+				if ($mem_cpt_pos=='p'){
+					$err=true;
+					$echo_test .= message ('ArgIncomp',array('-cpt','-pos'));
+					break;
+				} else {
+					$mem_cpt_pos='c'; 
+					$echo_test.= message ('par_cpt');					
+				}
+				$prochain = "";
+				break;
+			case "pos" :
+				if ($mem_cpt_pos=='c'){
+					$err=true;
+					$echo_test .= message ('Inc-cpt+pos');
+					break;
+				} else {
+					$mem_cpt_pos='p'; 
+					$echo_test.= message ('par_pos');					
+				}
 				$prochain = "";
 				break;
 			case "multi" :
@@ -335,27 +352,31 @@ foreach ($argv as $v_arg){
 			
 		}
 } // fin analyse ligne de commande
-
-if ($mem_cpt) { 
-	if ($mode=='multi' || $mode_u) {
-			$err=true;
-			$echo_test .= message ('-cpt+-multiOU-uk');
+$allcol=false;
+if ($mem_cpt_pos) { 
+	if ($mem_cpt_pos=='c' && ($mode=='multi' || $mode_u)) {
+		$err=true;
+		$echo_test .= message ('-cpt+-multiOU-uk');
 	} 
+	if ($mode_u=='u'){
+		$err=true;
+		$echo_test .= message('-uSs-col');
+	}
 }
 if ($mode=='multi'){
 	if ($mode_u=='uk') {
 			$err=true;
 			$echo_test .= message('-multi+-uk');
 	} 
-}
-if ($cols) {
-	if ($mem_cpt){
-			$err=true;
-			$echo_test .= message ('-cpt+-col');
+} else {
+	if ($cols) {
+		if ($mem_cpt_pos){
+				$err=true;
+				$echo_test .= message ('-cpt+-col');
+		}
+	} else {
+		$allcol=true;
 	}
-} elseif ($mode_u=='u'){
-	$err=true;
-	$echo_test .= message('-uSs-col');
 }
 /*
  * Lecture du fichier des parenthèseur
@@ -393,7 +414,7 @@ if ($test || $err) {
 			$echo_etat.= message ('estMulti');
 		if ($mode_u) 
 			$echo_etat.= message('est-u');
-		if ($mem_cpt)
+		if ($mem_cpt_pos=='c')
 			$echo_etat.= message('est-cpt');
 }
 if ($emploi) {
@@ -490,8 +511,8 @@ foreach ($sources as $source) {
 			}
 			$a_tester = substr($a_tester,strlen($glu));
 		} else $a_tester=$ligne;
+		$a_memo = "";
 		if (count($cols)>0) {
-			$a_memo = "";
 			foreach ($cols as $col) {
 				$a_memo.= $glu;
 				if ($col > count($tab_ligne)){
@@ -506,7 +527,16 @@ foreach ($sources as $source) {
 				}
 			}
 			$a_memo = substr($a_memo,strlen($glu));
-		} else  $a_memo=$marque;
+		} elseif ($mem_cpt_pos!='') $a_memo=$marque;
+		else {
+			for ($icol=0;$icol<count($tab_ligne);$icol++){
+				$place = $icol+1;
+				if (in_array($place, $tri_col)) continue;
+				$cols[]=$place;
+				$a_memo .= $glu. $tab_ligne[$icol];
+			}
+			$a_memo = substr($a_memo,strlen($glu));
+		}
 		
 		// Revoir pour rejet
 		if ($a_tester) {
@@ -556,7 +586,7 @@ if ($mode=='multi'){
 		if ($mode_u=='uk' && $cle==$cle_cou) continue;
 		$val = trim(substr($ligne, $p+3));
 		if ($cle_cou!=$cle && $cle_cou!="") {
-			if ($mem_cpt) {$cumul =$glu.$cpt_val;}
+			if ($mem_cpt_pos=='c') {$cumul =$glu.$cpt_val;}
 			$l = $cle_cou.$cumul;
 			puts_result('res', $l);
 			$cptecrites++;
@@ -566,7 +596,7 @@ if ($mode=='multi'){
 		$cumul .= $glu.$val; $cpt_val++;
 	}
 	if ($cumul || $cpt_val) {
-		if ($mem_cpt) {$cumul =$glu.$cpt_val;}
+		if ($mem_cpt_pos=='c') {$cumul =$glu.$cpt_val;}
 		$l = $cle_cou.$cumul;
 		puts_result('res', $l);
 		$cptecrites++;

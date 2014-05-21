@@ -137,7 +137,7 @@ function  traite_ligne_header_mess ($no,$p){
 		} 
 }
 
-function message ($no,$p) {
+function message ($no,$p="") {
 	if (is_array($p) && count($p)<5){
 		$p0=$p[0];
 		if (count($p)>1) $p1=$p[1];
@@ -148,12 +148,14 @@ function message ($no,$p) {
 		case 'ComInv' :
 			return ("invalide : $p\n  fournir pour le moins, clé de tri , source, ... \n ".
 					"... pour précision mettre aide");	
-		case 'ArgInc' :
-			return ("Argument $p0 hors liste $p1.\n");
+		case 'ArgIncomp' : 
+			return ("Arguments incompatibles $p0 et $p1.\n");
 		case 'par=' :
 			return ("Parametre = $p\n");
 		case 'par_cpt' :
-			return (" Memo du compte d occurrence\n");	
+			return (" Memo du compte d occurrence\n");
+		case 'Inc-cpt+pos' :	
+			return ("Options -cpt et -pos incompatibles.\n");
 		case '-u+-uk' :
 			return ("ERR : -u et -uk exclusif\n");
 		case 'ArgInc' :
