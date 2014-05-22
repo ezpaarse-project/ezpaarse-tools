@@ -1,0 +1,4 @@
+# Put your own ezproxy config.txt file in this directory.
+# ... and other included config files with an extension of .txt ex:
+#IncludeFile another_config.txt
+
