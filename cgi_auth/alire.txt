@@ -1,13 +1,16 @@
-CGI d'authentification qui fonctionne sur le modèle proposé par Chris Zagar pour ezproxy i.e. le ticket, tel qu'il est
-rendu a le format pour ezproxy. 
-Surtout utile avec le SSO CAS et un service LDAP mais peut n'utiliser que le LDAP.
+CGI d'authentification qui fonctionne sur le modèle proposé par Chris Zagar pour ezproxy i.e. pour créer une session :  
+- le reverse proxy redirige vers le CGI en lui fournissant l'URL à repréciser
+- le CGI identifie l'usager et lui attribue des groupes d'accès.
+- le CGI redirige vers le reverse proxy en ajoutant un ticket qui contoent URL, login et groupes encodés SHA clé privée connue 
+  uniquement reverse et CGI
+Dans son état, surtout utilisable avec le SSO CAS et/ou un service LDAP (il peut n'utiliser que le LDAP).
 Intérêt : 
 - Possibilités de configuration des accès par combinaison de champs
 - Gestion d'un log permettant de tracer des profils usager pour les statistiques
 - Outil de simulation pour vérifier ses accès en fonction de son identité / de son lieu d'interrogation.
 - Affichage des IP permettant un accès anonyme aux ressources.
 
-Utilise des modules  libs.
+Utilise des modules du répertoire libs.
 
 * Le CGI est lancé par index.php (fichier par défaut à la racine du service en configuration apache).
 * outil de diagnostic de l'administrateur verif.php.
