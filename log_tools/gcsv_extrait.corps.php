@@ -21,7 +21,7 @@ $libs = $racinePhys."/libs";
               [-colt colnamenum {+|-}ctriteria] [-colt ....]]              
               [-{colca|colcip|colda|coldip} colnamenum [colnamenum ...]]
               [(+|-)col colnamenum [colnamenum ...]] [(+|-)allcol)] [+colf colnamenum:value [colnamenum:value ...]]  
-              [-colurl colnamenum +colu(scheme|host|port|path|query|fragment) [+colu(scheme|...)...]]              
+              [-colurl colnamenum +colu(scheme|host|hostrv|port|path|query|fragment) [+colu(scheme|...)...]]              
               [-res result_filename] [-rej reject_filename] 
                {src source_filenames| source_filename}
  * where ctriteria =
@@ -37,7 +37,7 @@ $libs = $racinePhys."/libs";
  *  dans la colonne correspondant au critère .
  *  Les colonnes sélectionnées pour le résultat peuvent être réordonnées et encodé.
  *  Une colonne contenant une URL peut être éclatée en plusieurs correspondants aux éléments choisi 
- *  formant l'URL d'origine (e.g. host, path, query V. parse_url :: http://www.php.net/manual/fr/function.parse-url.php
+ *  formant l'URL d'origine (e.g. host, hostrv, path, query V. parse_url :: http://www.php.net/manual/fr/function.parse-url.php
  *
  *  Le CSV peut être un fichier de logs dont les valeurs d'une colonne peuvent contenir le caractère
  *  servant à séparer par ailleurs les colonnes souvent l'espace). 
@@ -104,7 +104,7 @@ $parametres_possibles = array('-aide','-help','-h',"-test",'+test','-v','-rappor
 							'+hd','-hd','+hd1','-hd1','-format',
 							'-allcol','+allcol','-col','+col'
 							,'-colca','-colcip','-colda','-coldip','-colurl',
-							'+coluscheme','+coluhost','+coluport','+colupath',
+							'+coluscheme','+coluhost','+coluhostrv','+coluport','+colupath',
 							'+coluquery','+colufragment','+colf',
 							'-strout',
 							'-colt','-cold',
@@ -697,6 +697,20 @@ function valeur_col_valide ($vtestee,$nocol){
 	return ('');
 }
 
+/**
+ * Calcul du host renversé pour le traitement des URL
+ */
+function ana_url ($str){
+	$v_url = parse_url($str);
+	if (isset($v_url['host'])){
+		$v_url['hostrv'] = implode
+								('.'
+								,array_reverse 
+									(explode ('.',$v_url['host']))
+								);		
+	} 
+	return ($v_url);
+}
 
 /**
  * Calcul de la valeur à écrire en ne conservant que les colonnes requises et en encodant les colonnes
@@ -724,7 +738,7 @@ function ecrit_res_acode (&$tab,$col_plus,$col_moins,$col_codes,$glu=" ",$col_ur
 			$t_tot = explode(' ',$tab[$col_url-1]);
 			foreach ($t_tot as $un_morceau){
 				if (strpos($un_morceau, '://')===false) continue;
-				$v_url = parse_url($un_morceau);
+				$v_url=ana_url($un_morceau);
 				break; 
 			}
 			foreach ($v_url as $membre=>$v) {
@@ -1070,6 +1084,7 @@ foreach ($argv as $un_arg){
 				break;
 			case 'coluscheme' :
 			case 'coluhost' :
+			case 'coluhostrv' :
 			case 'coluport' :
 			case 'colupath' :
 			case 'coluquery' :

@@ -14,7 +14,7 @@
               [-colt colnamenum {+|-}ctriteria] [-colt ....]]              
               ([{+|-}col colnamenum [colnamenum ...] ]|-allcol) 
               [-{colca|colcip|colda|coldip} colnamenum [colnamenum ...]]
-              [-colurl colnamenum +colu(scheme|host|port|path|query|fragment) [+colu(scheme|...)...]]
+              [-colurl colnamenum +colu(scheme|host|hostrv|port|path|query|fragment) [+colu(scheme|...)...]]
               [-res result_filename] [-rej reject_filename] 
                {src source_filenames| source_filename}
  * where ctriteria =
@@ -30,7 +30,8 @@
  *  dans la colonne correspondant au critère .
  *  Les colonnes sélectionnées pour le résultat peuvent être réordonnées et encodé.
  *  Une colonne contenant une URL peut être éclatée en plusieurs correspondants aux éléments choisi 
- *  formant l'URL d'origine (e.g. host, path, query V. parse_url :: http://www.php.net/manual/fr/function.parse-url.php
+ *  formant l'URL d'origine (e.g. host,  path, query V. parse_url :: http://www.php.net/manual/fr/function.parse-url.php)
+ *  et hostrv qui est le host renversé pour l'avoir dans un ordre logique.
  *
  *  Le CSV peut être un fichier de logs dont les valeurs d'une colonne peuvent contenir le caractère
  *  servant à séparer par ailleurs les colonnes souvent l'espace). 
@@ -103,7 +104,7 @@ Usage : ./gcsv_extrait.php -aide | (
               [-cold colnamenum:format (+|-)datecriteria] [-cold ...] [-strin]  
               [-{colca|colcip|colda|coldip} colnamenum [colnamenum ...]]
               [(-allcol | (+|-)col colnamenum [colnamenum ...])] [+colf colnamenum:value [colnamenum:value ...]]  
-              [-colurl colnamenum +colu(scheme|host|port|path|query|fragment) [+colu(scheme|...)...]]
+              [-colurl colnamenum +colu(scheme|host|hostrv|port|path|query|fragment) [+colu(scheme|...)...]]
               [-res result_filename] [-rej reject_filename] 
               [-src source_filenames [source_filename ...]]
               )
@@ -134,7 +135,8 @@ Toutefois, une valeur peut etre recherchee, exclue sur toute la ligne sauf pour 
 numeriques ou dates.
   Les colonnes sélectionnées pour le résultat peuvent être réordonnées et leur contenu encodé/décodé ou 
 eclate pour les URL et n'en retenir que des éléments constitutifs (host, path, query V. parse_url :: 
-http://www.php.net/manual/fr/function.parse-url.php). 
+http://www.php.net/manual/fr/function.parse-url.php), plus une colonne hostrv qui contient le 
+host dans un logique de ses composants de domaine.
 
   Le CSV peut être un fichier de logs et les valeurs de certaines colonnes (date/heure) peuvent contenir
 le separateur de colonnes qui est l'espace. Pour délimiter le contenu de ces colonnes, des couples de 
@@ -199,10 +201,12 @@ Arguments :
        sur les autres lignes.   
     -colurl N : indique la colonne N  en source contenant une URL a scinder dans le resultat. Les attributs
        suivants ne peuvent etre employes que si cette colonne est precisee 
-    +colu(scheme|host|port|path|query|fragment) : 
+    +colu(scheme|host|hostrv|port|path|query|fragment) : 
         ne peut être employé qu'avec l'argument -colurl. Permet de positionner dans le resultat 
         scheme = le protocole (http), host = le serveur , port, path = la page demandee, 
-        query=les parametres de la requete, fragment = paragraphe devant être présenté dans la page resultat.
+        query=les parametres de la requete, fragment = paragraphe devant être présenté dans la page resultat, 
+        et hostrv  = le nom du serveur mais dans l'ordre logique du super domaine
+        au sous-...-domaine. 
     -allcol : indication rapide de récuperation de toutes les colonnes non encore designees par un
         +col??? ci-dessus.
     -strout : rejette toute ligne dont une colonne a ecrire est absente 

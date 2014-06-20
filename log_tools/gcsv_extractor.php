@@ -9,7 +9,8 @@ To select lines, it casts them on excluded values or choices these which contain
   The exclusion or search for a value can be done in all line string or in single column string.
   However, numerical criteriae have to specify the column implied 
 Columns that have to appear in the result can be reordered, encoded or decoded, even URL column can be explode 
-  in many URL element columns (host, path, query, ...) [parse_url ::http://www.php.net/manual/fr/function.parse-url.php).] 
+  in many URL element columns (host, path, query, ...) [parse_url ::http://www.php.net/manual/fr/function.parse-url.php).]
+  and special hostrv   
 As columns can contain the CSV column delimiter, it's possible to define characters couple to parenth their
   values. These couples are found in "-par" file named in the command line. 
   Default is that these column values must be enclosed between double quotes("") or left/right bracket([]).
@@ -43,7 +44,7 @@ Usage : ./gcsv_extractor.php
               [-cold colnamenum:format (+|-)datecriteria] [-cold ...] [-strin]  
               [-{colca|colcip|colda|coldip} colnamenum [colnamenum ...]]
               [(-allcol | (+|-}col colnamenum [colnamenum ...])] [+colf colnamenum:value [colnamenum:value ...]]  
-              [-colurl colnamenum +colu(scheme|host|port|path|query|fragment) [+colu(scheme|...)...]]
+              [-colurl colnamenum +colu(scheme|host|hostrv|port|path|query|fragment) [+colu(scheme|...)...]]
               [-res result_filename] [-rej reject_filename] 
               [-src source_filenames [source_filename ...]]
               )
@@ -69,7 +70,8 @@ To select lines, it casts them on excluded values or choices these which contain
   The exclusion or search for a value can be done in all line string or in single column string.
   However, numerical criteriae have to specify the column implied 
 Columns that have to appear in the result can be reordered, encoded or decoded, even URL column can be explode 
-  in many URL element columns (host, path, query, ...) [parse_url ::http://www.php.net/manual/fr/function.parse-url.php).] 
+  in many URL element columns (host, path, query, ...) [parse_url ::http://www.php.net/manual/fr/function.parse-url.php).]
+  and a special column hostrv which is reversed host's components column  
 As columns can contain the CSV column delimiter, it's possible to define characters couple to parenth their
   values. These couples are found in "-par" file named in the command line. 
   Default is that these column values must be enclosed between double quotes("") or left/right bracket([]).
@@ -130,10 +132,11 @@ Arguments :
        (resp_y val2 ...) in the next lines.
     -colurl N : to say that N column contains URL values. This parameter is only used with one of the 
        following: 
-    +colu(scheme|host|port|path|query|fragment) : 
+    +colu(scheme|host|hostrv|port|path|query|fragment) : 
         must be used in conjunction with -colurl to says what URLelements have to be written in result. 
         scheme = protocol (http/ftp/...),
         host = DNS host name of server, ... (port, path, query and fragment).
+        hostrv = reversed host name .
     -allcol : to add all the other after. Cannot be used with -col N  or before any of the preceding
        +col??? parameters. 
         
