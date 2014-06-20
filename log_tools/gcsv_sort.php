@@ -131,11 +131,7 @@ function  traite_ligne_header_mess ($no,$p){
 		} 
 }
 
-<<<<<<< HEAD
 function message ($no,$p="") {
-=======
-function message ($no,$p) {
->>>>>>> ee89e4d44c2ffe383bb7c5ba0726dd87b67865e9
 	if (is_array($p) && count($p)<5){
 		$p0=$p[0];
 		if (count($p)>1) $p1=$p[1];
@@ -145,13 +141,8 @@ function message ($no,$p) {
 	switch ($no){
 		case 'ComInv' :
 			return ("Invalid command line : $p\n  must contains at least sort columns or -help to have some help.\n ");	
-<<<<<<< HEAD
 		case 'ArgIncomp' : 
 			return ("$p0 cannot be used with $p1.\n");
-=======
-		case 'ArgInc' :
-			return ("Unknown parameter $p0: out of $p1.\n");
->>>>>>> ee89e4d44c2ffe383bb7c5ba0726dd87b67865e9
 		case 'par=' :
 			return (" Parameter = $p\n");
 		case 'par_cpt' :

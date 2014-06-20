@@ -137,11 +137,7 @@ function  traite_ligne_header_mess ($no,$p){
 		} 
 }
 
-<<<<<<< HEAD
 function message ($no,$p="") {
-=======
-function message ($no,$p) {
->>>>>>> ee89e4d44c2ffe383bb7c5ba0726dd87b67865e9
 	if (is_array($p) && count($p)<5){
 		$p0=$p[0];
 		if (count($p)>1) $p1=$p[1];
@@ -152,7 +148,6 @@ function message ($no,$p) {
 		case 'ComInv' :
 			return ("invalide : $p\n  fournir pour le moins, clé de tri , source, ... \n ".
 					"... pour précision mettre aide");	
-<<<<<<< HEAD
 		case 'ArgIncomp' : 
 			return ("Arguments incompatibles $p0 et $p1.\n");
 		case 'par=' :
@@ -161,14 +156,6 @@ function message ($no,$p) {
 			return (" Memo du compte d occurrence\n");
 		case 'Inc-cpt+pos' :	
 			return ("Options -cpt et -pos incompatibles.\n");
-=======
-		case 'ArgInc' :
-			return ("Argument $p0 hors liste $p1.\n");
-		case 'par=' :
-			return ("Parametre = $p\n");
-		case 'par_cpt' :
-			return (" Memo du compte d occurrence\n");	
->>>>>>> ee89e4d44c2ffe383bb7c5ba0726dd87b67865e9
 		case '-u+-uk' :
 			return ("ERR : -u et -uk exclusif\n");
 		case 'ArgInc' :
