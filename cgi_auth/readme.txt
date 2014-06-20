@@ -11,7 +11,11 @@ Interest :
 - Has user and admin access test tools
 - Can list the anonymous access hosts.
 
+<<<<<<< HEAD
 Need PHP modules libs directory.
+=======
+Need libs PHP modules.
+>>>>>>> ee89e4d44c2ffe383bb7c5ba0726dd87b67865e9
 
 Tools :
 * The CGI = index.php (can be default root file for apache).
