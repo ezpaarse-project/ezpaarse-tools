@@ -1,0 +1,21 @@
+Outil de redirection d'une requête vers votre reverse proxy (ezproxy) si l'URL
+demandée le requière.
+Peut être utilisé avec un signet contenant le javascript :
+javascript:function%20o(){window.location.replace('http://mon.service.fr/accesRef/index.php?url='+location.href,"Accesdistant")};o()
+
+L'effet de ce signet sera de rediriger la page courante vers votre test accesRef/index.php qui redirigera directement vers la page 
+ou vers le reverse proxy configuré dans accesRef/conf/conf.inc.php
+Ou sans ce signet, avec un formulaire qui renvoie le paramètre url avec l'URL OU un N° DOI OU un N° PMId, les deux dernier demandant 
+par ailleurs l'usage d'un résolveur de lien comme AtoZ, ...
+!!! Adaptation 
+conf /conf.inc.php : 
+ - URL de votre reverse proxy (ezproxy, bibliopam, ...) 
+  - URLs adaptées du résolveur de lien pour un DOI ou un PMId.
+  - répertoire ($dir_sources=DHD ci-dessous) et fichier ($fic_liste=liste_hd ci-dessous) contenant la liste des domaines traités par le reverse et dont les URL sont à envoyer
+   vers lui.
+DHD/ : mettre tous les fichiers de configuration de votre ezproxy. Le traitement d'autre format de fichiers de configuration
+  pourra être envisagé.
+DHD/liste_hd : fichier à créer avec le programme ...
+!!! Traitement à faire à chaque évolution de configuration :
+traitements/cree_liste_hosts.php : qui crée le fichier liste_hd et les fichier general et conflits dans le répertoire DHD.
+

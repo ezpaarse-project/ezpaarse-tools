@@ -60,9 +60,7 @@ include_once ("./valid_acces.php");
 $tous_les_att_LDAP = $_SESSION['_VAcces_utilisateur'];
 $tab_profiles = profiles_LDAP ($tous_les_att_LDAP);
 $profiles = $tab_profiles['profiles'];
-if (!	(in_array('G2D--', $profiles) 
-		|| in_array('G1N04', $profiles) 
-		|| in_array('G1N02', $profiles)
+if (!	(in_array('V1', $profiles) 
 		)
 	){
   		exit (trad_message('gen','appli_interdite'));
@@ -80,7 +78,10 @@ if (!	(in_array('G2D--', $profiles)
 $groupes_IP=""; $ajout_trace = "";
 
 include_once './canonise_IP.php';
-$son_IP = $_SERVER['REMOTE_ADDR']; $cson_IP =canonise_IP($son_IP); 
+$son_IP =  (isset($_GET['IP_testee']) && $_GET['IP_testee']!='') ?
+		$_GET['IP_testee']: 
+		$_SERVER['REMOTE_ADDR']; 
+$cson_IP =canonise_IP($son_IP); 
 
 
 $groupes_corres =test_groupes_IP($son_IP); 
@@ -104,6 +105,13 @@ if ($groupes_corres===false) {
 	$groupes = implode('+',$groupes_corres);
 	$groupes_bck = implode('+',$groupes_corres_bck);	
 }
+
+/*
+ * Formulaire de saisie d'IP. 
+ */
+$mess = "<p>IP : <FORM method=get><input type=text name=IP_testee value=\"$son_IP\">".
+		"</FORM></p>\n";
+en_trace ($mess);
 
 
 /*

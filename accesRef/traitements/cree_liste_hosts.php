@@ -25,7 +25,10 @@
 
 $ce_repertoire = dirname(__FILE__);
 include_once ($ce_repertoire."/../conf/conf.inc.php");
+<<<<<<< HEAD
+=======
 $fic_liste.=".test";
+>>>>>>> ee89e4d44c2ffe383bb7c5ba0726dd87b67865e9
 
 
 

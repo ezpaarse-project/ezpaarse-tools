@@ -45,7 +45,11 @@ public function decode_valeur($v,$mode){
 /* Your code to decode strings - Votre code pour decoder une chaine */  
 						break;
 		case 'ip':
+<<<<<<< HEAD
+/* Your code to decode IP number - Votre code pour decoder un n° IP */  
+=======
 /* Your code to encode IP number - Votre code pour encoder un n° IP */  
+>>>>>>> ee89e4d44c2ffe383bb7c5ba0726dd87b67865e9
 	}
 	self::$v_decodees[$v]=$res;
 	return ($res);
