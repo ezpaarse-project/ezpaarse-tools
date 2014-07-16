@@ -178,7 +178,7 @@ foreach ($argv as $v_arg){
 			case "pos" :
 				if ($mem_cpt_pos=='c'){
 					$err=true;
-					$echo_test .= message ('Inc-cpt+pos');
+					$echo_test .= message ('ArgIncomp',array('-cpt','-pos'));
 					break;
 				} else {
 					$mem_cpt_pos='p';
@@ -192,7 +192,7 @@ foreach ($argv as $v_arg){
 				break;
 			case 'u' :
 				if ($mode_u=='uk') {
-					$echo_test .= message ('-u+-uk');
+					$echo_test .= message ('ArgIncomp',array('-u','-uk'));
 					$err=true;
 				}
 				$mode_u = 'u';
@@ -200,7 +200,7 @@ foreach ($argv as $v_arg){
 				break;
 			case 'uk' :
 				if ($mode_u=='u') {
-					$echo_test .= message ('-u+-uk');
+					$echo_test .= message ('ArgIncomp',array('-u','-uk'));
 					$err=true;
 				}
 				$mode_u = 'uk';
