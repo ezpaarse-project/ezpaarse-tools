@@ -4,35 +4,36 @@ $ce_repertoire = dirname(__FILE__);
 require_once ($ce_repertoire."/parentheses.lib.php");
 
 /**
- * 
+ * function explode_lig ($ligne_entree,$sep,$limites_valeurs=array(),$ote_parentheses=false)
+ *
  * Explode GCSV record line to an array of its columns. Using sep and perentheses to parse.
- *  
- * Fonction qui tout en eclatant la ligne sur le séparateur principal, tout en tenant
- * compte des caractères parenthèsants.  
- * Les parenthèses permettent aux valeurs de comporter LE caractère séparateur de colonne. 
- * Ex : si le séparateur est le plus générique : l'espace, on peut avoir comme parenthèses
- * les crochets pour la date soit [AAAA/MM/JJ à HH:mm:ss]
- *   
- * @param string $ligne_entree : ligne à découper 
- * @param char $sep : séparateur de colonnes
- * @param array $col_testees : liste (en clé) des colonnes devant être testées. La colonne C porte un critère
+ *
+ * Fonction qui tout en eclatant la ligne sur le sÃ©parateur principal, tout en tenant
+ * compte des caractÃ¨res parenthÃ©sants.
+ * Les parenthÃ¨ses permettent aux valeurs de comporter LE caractÃ¨re sÃ©parateur de colonne.
+ * Ex : si le sÃ©parateur est le plus gÃ©nÃ©rique : l'espace, on peut avoir comme parenthÃ¨ses
+ * les crochets pour la date soit [AAAA/MM/JJ Ã  HH:mm:ss]
+ *
+ * @param string $ligne_entree : ligne Ã  dÃ©couper
+ * @param char $sep : sÃ©parateur de colonnes
+ * @param array $col_testees : liste (en clÃ©) des colonnes devant Ãªtre testÃ©es. La colonne C porte un critÃ¨re
  * 			 si $col_testees[C] existe.
- * @uses global $limites_valeurs : tableau 
- * @return mixed array = tableau des valeurs contenues dans la ligne 
+ * @uses global $limites_valeurs : tableau
+ * @return mixed array = tableau des valeurs contenues dans la ligne
  * 				 string = message d'erreur
  */
 
 function explode_lig ($ligne_entree,$sep,$limites_valeurs=array(),$ote_parentheses=false){
 	$ligne_entree=trim($ligne_entree);
 	$prem_tab = preg_split('/(\\'.$sep.')/', $ligne_entree,-1,PREG_SPLIT_DELIM_CAPTURE);
-	$tab_res = array(); 
+	$tab_res = array();
 	$limit_val=$val_retenue="";
-	// analyse de chaque morceau 
+	// analyse de chaque morceau
 	for ($ipos=0;$ipos<count($prem_tab);$ipos+=2) {
-		// si on est en cours de valeur parenthésée 
-		$morceau=$prem_tab[$ipos];
+		// si on est en cours de valeur parenthÃ©sÃ©e
+		$morceau=$prem_tab[$ipos];$l_limit_val=0;
 		if ($limit_val) {
-			// si fin de parenthèse mémorisation et init pour la suite
+			// si fin de parenthÃ¨se mÃ©morisation et init pour la suite
 			if (substr($morceau,-$l_limit_val) ==$limit_val) {
 				if ($ote_parentheses) $morceau = substr($morceau,0,-$l_limit_val);
 				$limit_val="";
@@ -40,14 +41,14 @@ function explode_lig ($ligne_entree,$sep,$limites_valeurs=array(),$ote_parenthes
 				$limit_val="";
 			}
 			if ($ipos>0) $val_retenue.= $prem_tab[$ipos-1];
-			$val_retenue.=$morceau;			
+			$val_retenue.=$morceau;
 			if (!$limit_val){
 				$tab_res[]=$val_retenue;
 				$val_retenue="";
-			} 				
+			}
 			continue;
-		} 
-		// on N'est pas dans une valeur parenthésée. On recherche si c'en est le début 
+		}
+		// on N'est pas dans une valeur parenthÃ©sÃ©e. On recherche si c'en est le dÃ©but
 		foreach ($limites_valeurs as $def){
 			if (strpos($morceau, $def[0])===0){
 				$fin = substr($morceau,-strlen($def[1]));
@@ -61,34 +62,34 @@ function explode_lig ($ligne_entree,$sep,$limites_valeurs=array(),$ote_parenthes
 					if ($ote_parentheses) $morceau = substr($morceau,0,-strlen($fin));
 				}
 				break;
-			} 
+			}
 		}
 		if ($limit_val) {
-			$val_retenue=$morceau; 
+			$val_retenue=$morceau;
 		} else {
 			$tab_res[]=$morceau;$val_retenue="";
-		}		
+		}
 	}
 	return ($tab_res);
 }
 
-/* 
+/*
  * ------------------------------------------------------------------------------
- * Header and named columns 
- * Traitement des colonnes nommées et des headers
- *  ------------------------------------------------------------------------------ 
+ * Header and named columns
+ * Traitement des colonnes nommÃ©es et des headers
+ *  ------------------------------------------------------------------------------
  */
 
 /**
  * Returns an indexed table from a hash table $converted by conversion of
  *  the names used to hash into the column position integer
- *    
- * Pour toutes les tables indexée par un identifiant de colonne, transforme un nom 
- * identifiant en un numéro de colonne
- *  @param array $converted:  Table to convert indexing mode - 
- *  	$tab_indexee  tableau dont on convertit les index qui sont des noms par le n° de la colonne
+ *
+ * Pour toutes les tables indexÃ©e par un identifiant de colonne, transforme un nom
+ * identifiant en un numÃ©ro de colonne
+ *  @param array $converted:  Table to convert indexing mode -
+ *  	$tab_indexee  tableau dont on convertit les index qui sont des noms par le nÂ° de la colonne
  *  @param array $conversion:  conversion hash table (name=>column number) -
- *  	$tab_conv  tableau qui associe à un nom de colonne son numéro
+ *  	$tab_conv  tableau qui associe Ã  un nom de colonne son numÃ©ro
  *  @return string = error message - message d erreur.
  */
 function indexName2Number (&$converted,$conversion){
@@ -100,7 +101,7 @@ function converti_col_index (&$tab_indexee,$tab_conv) {
 	$res = array();
 	foreach ($tab_indexee as $index=>$valeur){
 		if (isset($tab_conv[$index])) $res[$tab_conv[$index]]=$valeur;
-		elseif (strpos($index, 'URL:')=== 0 || strpos($index, 'FIX:')=== 0 || 
+		elseif (strpos($index, 'URL:')=== 0 || strpos($index, 'FIX:')=== 0 ||
 				$index=='*') $res[$index]=$valeur;
 		else $err .= converti_col_val_mess('COLINV', $index);
 	}
@@ -109,16 +110,16 @@ function converti_col_index (&$tab_indexee,$tab_conv) {
 }
 /**
  * colName2Number - converti_col_val
- * 
+ *
  * Converts a column name into its position number. If input $converted is an array,
  * converts all its values.
- * 
- * Pour tous les identifiants nominatifs de colonne, transforme le nom en numéro de colonne.
+ *
+ * Pour tous les identifiants nominatifs de colonne, transforme le nom en numÃ©ro de colonne.
  * Si l'argument est un tableau, traite toutes les valeurs du tableau
  *  @param mixed $converted: value or array of values to convert -
- *  	$col_p_nom  valeur ou tableau de valeurs a convertir 
+ *  	$col_p_nom  valeur ou tableau de valeurs a convertir
  *  @param array $conversion: conversion hash table (name=>column number) -
- * 		$tab_conv  tableau les index sont ceux de l'autre et les valeurs doivent remplacer 
+ * 		$tab_conv  tableau les index sont ceux de l'autre et les valeurs doivent remplacer
  *      ces index.
  *  @return string = error message - message d erreur.
  */
@@ -144,85 +145,85 @@ function converti_col_val (&$col_p_nom,$tab_conv) {
 
 
 /*
- * ================================================================================ 
- * Use of StdIn / StdOut or Input / Output file 
- * 
- * Bloc de gestion des sources entrée standard ou fichier compressé.  
- * ================================================================================ 
+ * ================================================================================
+ * Use of StdIn / StdOut or Input / Output file
+ *
+ * Bloc de gestion des sources entrÃ©e standard ou fichier compressÃ©.
+ * ================================================================================
 */
 /**
  * @var resource $source_u = surtout utile pour les fichier
- * @var char $standard_utilise='s' si on utilise l'entrée standard, vide sinon.
- * 
+ * @var char $standard_utilise='s' si on utilise l'entrÃ©e standard, vide sinon.
+ *
  */
 $unite_source_utilisee=''; $standard_utilise = '';
 
 /**
- * 
- * Permet d'ouvrir la source dans le cas d'un fichier. D'établir le mode standard dans le cas de l'entrée 
+ *
+ * Permet d'ouvrir la source dans le cas d'un fichier. D'Ã©tablir le mode standard dans le cas de l'entrÃ©e
  * standard.
- * @param string $unite = 'stdin' ou chemin du fichier 
- * @return resource 
+ * @param string $unite = 'stdin' ou chemin du fichier
+ * @return resource
  */
 function ouvre_source ($unite){
 	global $unite_source_utilisee,$standard_utilise;
 	if ($unite_source_utilisee || $standard_utilise){
 		if (!ferme_source()) return (false);
-	} 
+	}
 	if ($unite=='stdin') {
 		$standard_utilise='s';
 		$unite_source_utilisee = STDIN;
 	}else {
 		$unite_source_utilisee =gzopen($unite, 'r'); $standard_utilise='';
-	} 
+	}
 	return ($unite_source_utilisee);
 }
 /**
- * 
- * Rend une ligne lue à la source ...
+ *
+ * Rend une ligne lue Ã  la source ...
  * @return string = ligne lue.
  */
 function lit_source (){
 	global $unite_source_utilisee,$standard_utilise;
 	if ($standard_utilise=='s') return (fgets(STDIN));
-	else return gzgets($unite_source_utilisee); 
+	else return gzgets($unite_source_utilisee,1048576);
 }
 /**
- * 
+ *
  * Find'usage de la source...
  */
 function ferme_source(){
 	global $unite_source_utilisee,$standard_utilise;
 	if ($standard_utilise!='s') {$r = gzclose($unite_source_utilisee); }
 	else {$r=true;}
-	$unite_source_utilisee='';$standard_utilise=='';
+	$unite_source_utilisee=NULL;$standard_utilise=='';
 	return ($r);
 }
 /*
- * ================================================================================ 
- * Bloc de gestion de plusieurs fichiers d'entrees ou de resultats : 
- * sortie/entree standard ou fichier compressé.  
- * ================================================================================ 
+ * ================================================================================
+ * Bloc de gestion de plusieurs fichiers d'entrees ou de resultats :
+ * sortie/entree standard ou fichier compressÃ©.
+ * ================================================================================
 */
 /**
- * @var string array $result_files =  liste des fichiers écrits par étiquette logique
- * @var resource array $result_pointers =  liste des pointeurs de ressource par étiquette logique
- * 
+ * @var string array $result_files =  liste des fichiers Ã©crits par Ã©tiquette logique
+ * @var resource array $result_pointers =  liste des pointeurs de ressource par Ã©tiquette logique
+ *
  */
-$result_files=array(); $result_pointers=array(); 
+$result_files=array(); $result_pointers=array();
 /**
- * 
- * Permet d'ouvrir un fichier resultat etiqueté $label. Pour ouvrir la sortie standard, le 
- * nom de fichier 'stdout' sera donné, sinon c'est son adresse qui le sera.
- * Si l'étiquette est déjà utilisée pour un fichier différent, elle sera fermée sur ce fichier et
- * ouverte sur celui de l'appel à la finction.
- * Si le fichier désigné est déjà ouvert sur une autre étiquette, les deux étiquettes pointeront sur 
- * le même fichier sans altération du flux de sortie déjà produit.
- * Bien que la ressource soit inutile, elle est quand même fournie en résultat. En cas d'échec, 
+ *
+ * Permet d'ouvrir un fichier resultat etiquetÃ© $label. Pour ouvrir la sortie standard, le
+ * nom de fichier 'stdout' sera donnÃ©, sinon c'est son adresse qui le sera.
+ * Si l'Ã©tiquette est dÃ©jÃ  utilisÃ©e pour un fichier diffÃ©rent, elle sera fermÃ©e sur ce fichier et
+ * ouverte sur celui de l'appel Ã  la finction.
+ * Si le fichier dÃ©signÃ© est dÃ©jÃ  ouvert sur une autre Ã©tiquette, les deux Ã©tiquettes pointeront sur
+ * le mÃªme fichier sans altÃ©ration du flux de sortie dÃ©jÃ  produit.
+ * Bien que la ressource soit inutile, elle est quand mÃªme fournie en rÃ©sultat. En cas d'Ã©chec,
  * retourne false.
- * @param string $label = etiquette de sortie 
- * @param string $unite = 'stdout' ou chemin du fichier 
- * @return resource 
+ * @param string $label = etiquette de sortie
+ * @param string $unite = 'stdout' ou chemin du fichier
+ * @return resource
  */
 function open_result ($label,$unite){
 	global $result_files,$result_pointers;
@@ -238,17 +239,17 @@ function open_result ($label,$unite){
 		if ($unite=='stdout') {
 			$result_pointers[$label]=STDOUT;
 		}else {
-			$result_pointers[$label] = gzopen($unite, 'w'); 
-		} 
+			$result_pointers[$label] = gzopen($unite, 'w');
+		}
 	}
 	return ($result_pointers[$label]);
 }
 /**
- * 
- * Ecrit une ligne lue en résultat...
- * @param string $label = etiquette de sortie 
- * @param string $str = chaîne à écrire 
- * 
+ *
+ * Ecrit une ligne lue en rÃ©sultat...
+ * @param string $label = etiquette de sortie
+ * @param string $str = chaÃ®ne Ã  Ã©crire
+ *
  * @return boolean.
  */
 function puts_result ($label,$str){
@@ -257,45 +258,46 @@ function puts_result ($label,$str){
 	$d = substr($str, -1);
 	if ($d!="\n" && $d!="\r") $str.="\n";
 	if ($result_files[$label]=='stdin') return(fputs(STDOUT, $str));
-	return (gzputs($result_pointers[$label],$str)); 
+    gzputs($result_pointers[$label],$str);
+	return (true);
 }
 /**
- * 
- * Find'usage du résultat...
+ *
+ * Find'usage du rÃ©sultat...
  */
 function close_result($label){
 	global $result_files,$result_pointers;
 	if (!isset($result_pointers[$label])) return (false);
 	if ($result_files[$label]!='stdout') {
-		$r = gzclose($result_pointers[$label]); 
+		$r = gzclose($result_pointers[$label]);
 	} else {
 		$r = true;
 	}
 	if ($r) {
 		unset($result_files[$label]);
 		unset($result_pointers[$label]);
-	}	
+	}
 	return ($r);
 }
 /**
- * @var resource array $source_files =  liste des ressource (fichier) par étiquette logique
- * @var char $stdin_lab='' non vide si on utilise l'entree standard, pour l'étiquette logique.
- * 
+ * @var resource array $source_files =  liste des ressource (fichier) par Ã©tiquette logique
+ * @var char $stdin_lab='' non vide si on utilise l'entree standard, pour l'Ã©tiquette logique.
+ *
  */
 $source_files=array(); $source_pointers=array();
 /**
- * 
- * Permet d'ouvrir le fichier source ou l'entrée standard (nommée 'stdin') sur l'étiquette
- * indiquée. 
- * Si l'étiquette est déjà utilisée pour un fichier différent, elle sera fermée sur ce fichier et
- * ouverte sur celui de l'appel à la fonction.
- * Si le fichier désigné est déjà ouvert sur une autre étiquette, les deux étiquettes pointeront sur 
- * le même fichier sans altération de la position de lecture de cette entrée.
- * Bien que la ressource soit inutile, elle est quand même fournie en résultat. En cas d'échec, 
+ *
+ * Permet d'ouvrir le fichier source ou l'entrÃ©e standard (nommÃ©e 'stdin') sur l'Ã©tiquette
+ * indiquÃ©e.
+ * Si l'Ã©tiquette est dÃ©jÃ  utilisÃ©e pour un fichier diffÃ©rent, elle sera fermÃ©e sur ce fichier et
+ * ouverte sur celui de l'appel Ã  la fonction.
+ * Si le fichier dÃ©signÃ© est dÃ©jÃ  ouvert sur une autre Ã©tiquette, les deux Ã©tiquettes pointeront sur
+ * le mÃªme fichier sans altÃ©ration de la position de lecture de cette entrÃ©e.
+ * Bien que la ressource soit inutile, elle est quand mÃªme fournie en rÃ©sultat. En cas d'Ã©chec,
  * retourne false.
- * @param string $label = etiquette d'entrée 
- * @param string $unite = 'stdin' ou chemin du fichier 
- * @return resource / boolean = false 
+ * @param string $label = etiquette d'entrÃ©e
+ * @param string $unite = 'stdin' ou chemin du fichier
+ * @return resource / boolean = false
  */
 function open_source ($label,$unite){
 	global $source_files,$source_pointers;
@@ -311,54 +313,54 @@ function open_source ($label,$unite){
 		if ($unite=='stdin') {
 			$source_pointers[$label]=STDIN;
 		}else {
-			$source_pointers[$label] = gzopen($unite, 'r'); 
-		} 
+			$source_pointers[$label] = gzopen($unite, 'r');
+		}
 	}
 	return ($source_pointers[$label]);
 }
 /**
- * 
- * Rend une ligne lue à la source ...
- * @param string $label = etiquette de sortie 
- * 
+ *
+ * Rend une ligne lue Ã  la source ...
+ * @param string $label = etiquette de sortie
+ *
  * @return string = ligne lue.
  */
 function gets_source ($label){
 	global $source_files,$source_pointers;
 	if (!isset($source_pointers[$label])) return (false);
 	if ($source_files[$label]=='stdin') return (fgets(STDIN));
-	else return (gzgets($source_pointers[$label])); 
+	else return (gzgets($source_pointers[$label],1048576));
 }
 /**
- * 
+ *
  * Fin d'usage de la source...
  */
 function close_source($label){
 	global $source_files,$source_pointers;
 	if (!isset($source_pointers[$label])) return (false);
 	if ($source_files[$label]!='stdin') {
-		$r = gzclose($source_pointers[$label]); 
+		$r = gzclose($source_pointers[$label]);
 	} else {
 		$r = true;
 	}
 	if ($r) {
 		unset($source_files[$label]);
 		unset($source_pointers[$label]);
-	}	
+	}
 	return ($r);
 }
 
 /**
  * Rotation de version d'un fichier
- * Calcule le nom d'un fichier à créer en veillant à ne pas écraser des version antérieures
- * dudit fichier. A partir de son adresse complète, $path du suffixe avant lequel sera inséré 
- * un n° de version, cette fonction retourne selon le mode : l'adresse complète d'une nouvelle 
- * version ($mode == 'dns' ou ''), le simple nom de fichier suffixé ($mode=='ns'), 
- * ou non sans ($mode=='n') ou avec le répertoire ($mode='dn').
+ * Calcule le nom d'un fichier Ã  crÃ©er en veillant Ã  ne pas Ã©craser des version antÃ©rieures
+ * dudit fichier. A partir de son adresse complÃ¨te, $path du suffixe avant lequel sera insÃ©rÃ©
+ * un nÂ° de version, cette fonction retourne selon le mode : l'adresse complÃ¨te d'une nouvelle
+ * version ($mode == 'dns' ou ''), le simple nom de fichier suffixÃ© ($mode=='ns'),
+ * ou non sans ($mode=='n') ou avec le rÃ©pertoire ($mode='dn').
  * ... ou simplement le nombre de versions existantes ($mode=='c')
- * @param string $path : adresse complète du fichier avec son nom de base
- * @param string $suffix : suffixe du fichier devant lequel le N° de version doit être inséré.
- * @param string $mode : forme du résultat souhaité
+ * @param string $path : adresse complÃ¨te du fichier avec son nom de base
+ * @param string $suffix : suffixe du fichier devant lequel le NÂ° de version doit Ãªtre insÃ©rÃ©.
+ * @param string $mode : forme du rÃ©sultat souhaitÃ©
  */
 
 function tourne_fichier ($path,$suffix="",$mode=''){
@@ -367,7 +369,7 @@ function tourne_fichier ($path,$suffix="",$mode=''){
 	if ($suffix){
 	    if (substr($suffix,0,1)=='.') $extension = ltrim($suffix,'.');
 		else {	$extension=$suffix; $suffix='.'.$suffix;}
-		if ($elements['extension'] == $extension) 
+		if ($elements['extension'] == $extension)
 			$nom_simple = $elements['filename'];
 	}
 	$dir = $elements['dirname'];
@@ -377,7 +379,7 @@ function tourne_fichier ($path,$suffix="",$mode=''){
 	while (file_exists($path)){
 		$nom = $nom_simple."_$no";
 		$path = "$dir/$nom".$suffix;
-		$no++; 
+		$no++;
 	}
 	switch ($mode){
 		case 'ns' : return ($nom.$suffix);
@@ -385,7 +387,7 @@ function tourne_fichier ($path,$suffix="",$mode=''){
 		case 'dn': return("$dir/$nom");
 		case 'c': return($no);
 		case '' :
-		case 'dns': 
+		case 'dns':
 		default : return($path);
 	}
 }

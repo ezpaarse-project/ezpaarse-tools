@@ -11,9 +11,9 @@ $libs = $racinePhys."/libs";
  * gcsv_extrait.php V1.2.1
  *
  *
- * Script qui sert à supprimer ou à extraire de logs complets fournis par un service Web les lignes et colonnes
- * jugées (in)utiles (exemple les récupérations d'icônes, de javascripts, ...; les colonnes
- * de session ou de referer ou ... les données concernant un site/ un utilisateur, ...)
+ * Script qui sert Ã  supprimer ou Ã  extraire de logs complets fournis par un service Web les lignes et colonnes
+ * jugÃ©es (in)utiles (exemple les rÃ©cupÃ©rations d'icÃ´nes, de javascripts, ...; les colonnes
+ * de session ou de referer ou ... les donnÃ©es concernant un site/ un utilisateur, ...)
  *
  * Usage : gcsv_extrait.php [(+|-)test | -v | -rapport | -status)]
  * 			[-xtrt PHP_filename] [-max int] [(-tmax|-d) int] [-sep char] [-glu char]
@@ -33,70 +33,70 @@ $libs = $racinePhys."/libs";
             teq|tne|tge|tgt|tle|tlt datetime_value (as YYYY-MM-DD.hh.mm.ss)
             tbe|too datetime_interval (e.g. datetime,datetime)
 
- *  Une ligne est retenue si elle contient une des valeurs recherchées et ne contient pas de valeur exclue
- *  dans la colonne correspondant au critère .
- *  Les colonnes sélectionnées pour le résultat peuvent être réordonnées et encodé.
- *  Une colonne contenant une URL peut être éclatée en plusieurs correspondants aux éléments choisi
- *  formant l'URL d'origine (e.g. host, hostrv, path, query V. parse_url :: http://www.php.net/manual/fr/function.parse-url.php
+ *  Une ligne est retenue si elle contient une des valeurs recherchÃ©es et ne contient pas de valeur exclue
+ *  dans la colonne correspondant au critÃ¨re .
+ *  Les colonnes sÃ©lectionnÃ©es pour le rÃ©sultat peuvent Ãªtre rÃ©ordonnÃ©es et encodÃ©.
+ *  Une colonne contenant une URL peut Ãªtre Ã©clatÃ©e en plusieurs correspondants aux Ã©lÃ©ments choisi
+ *  formant l'URL d'origine (e.g. host, path, query V. parse_url :: http://www.php.net/manual/fr/function.parse-url.php
  *
- *  Le CSV peut être un fichier de logs dont les valeurs d'une colonne peuvent contenir le caractère
- *  servant à séparer par ailleurs les colonnes souvent l'espace).
- *  Ces colonnes à valeur complexes sont reconnues par le parenthésage de leurs valeurs.
- *  Par défaut, il y deux parenthèseurs (utilisé classiquement dans les logs) :
+ *  Le CSV peut Ãªtre un fichier de logs dont les valeurs d'une colonne peuvent contenir le caractÃ¨re
+ *  servant Ã  sÃ©parer par ailleurs les colonnes souvent l'espace).
+ *  Ces colonnes Ã  valeur complexes sont reconnues par le parenthÃ©sage de leurs valeurs.
+ *  Par dÃ©faut, il y deux parenthÃ¨seurs (utilisÃ© classiquement dans les logs) :
  *  la double quote("") ou le couple crochet ouvrant/fermant ([]).
- *  Pour changer les parenthèseurs, utiliser -par fichier_parentheses. Le contenu du fichier écrase les
- *  parenthéseurs par défaut.
- *  Au niveau des lignes retenues/exclues , cinq moyens permettent de les définir :
+ *  Pour changer les parenthÃ¨seurs, utiliser -par fichier_parentheses. Le contenu du fichier Ã©crase les
+ *  parenthÃ©seurs par dÃ©faut.
+ *  Au niveau des lignes retenues/exclues , cinq moyens permettent de les dÃ©finir :
  *   - des valeurs fournies directement au niveau de la commande -s chaine1 chaine2...
- *   - des valeurs standards basée sur des logs classiques (images et scripts)
+ *   - des valeurs standards basÃ©e sur des logs classiques (images et scripts)
  *   - des fichiers de valeurs (ASCII contenant une valeur par ligne)
  *   - des fichiers de host EzProxy (dont on ne retient que les host domain hj ou dj)
- *   - des valeurs numériques testées sur des colonnes qui leur sont spécifiques.
- *   Si aucun fichier n'est indiqué en source (-src), c'est l'entrée standard qui est utilisée.
- *   Si aucun fichier n'est indiqué en résultat (-res), c'est la sortie standard qui est utilisée.
- *   Si aucun fichier n'est indiqué pour les lignes non intéressante (-rej), elles sont oubliées.
- *    	Moins de 3s avec seulement la chaîne invalidante pour 17970 lignes retenues.
+ *   - des valeurs numÃ©riques testÃ©es sur des colonnes qui leur sont spÃ©cifiques.
+ *   Si aucun fichier n'est indiquÃ© en source (-src), c'est l'entrÃ©e standard qui est utilisÃ©e.
+ *   Si aucun fichier n'est indiquÃ© en rÃ©sultat (-res), c'est la sortie standard qui est utilisÃ©e.
+ *   Si aucun fichier n'est indiquÃ© pour les lignes non intÃ©ressante (-rej), elles sont oubliÃ©es.
+ *    	Moins de 3s avec seulement la chaÃ®ne invalidante pour 17970 lignes retenues.
  *  ... V1.2 (11/07/2013)
- *  	. adjonction de l'insertion de colonnes à valeur fixe
+ *  	. adjonction de l'insertion de colonnes Ã  valeur fixe
  *  ... V1.1 (15/05/2013)
- *      . adjonction de la possibilité de définir des valeurs commençant par le signe + ou -
+ *      . adjonction de la possibilitÃ© de dÃ©finir des valeurs commenÃ§ant par le signe + ou -
  *  ... V1.0 (6/05/2013)
- *  	.amélioration des performences en cas de test sur colonne
- *      .définition systématique des colonnes testées sauf pour l'ensemble de la ligne pour les
- *       paramètres s f et fh (qui peuvent être employés sans précision de colonne)
+ *  	.amÃ©lioration des performences en cas de test sur colonne
+ *      .dÃ©finition systÃ©matique des colonnes testÃ©es sauf pour l'ensemble de la ligne pour les
+ *       paramÃ¨tres s f et fh (qui peuvent Ãªtre employÃ©s sans prÃ©cision de colonne)
  *
  *  ... V0.3 (2013.04.09)
- *      . adjonction du paramètre format
+ *      . adjonction du paramÃ¨tre format
  *   ... V0.2 (2013.03.01) :
- *     - test numériques  sur des colonnes différentes des tests textuels
- *      avec intervalle de valeurs (utiles pour les code de retour HTTP, les taille en octets des échanges)
- *     - usage possible d'expressions régulières comme chaîne d'exclusion ou de sélection des lignes
- *       soit en ligne de commande (paramètre s) soit dans les fichiers de valeurs (paramètre f)
- *     - decodage symetrique du codage. Permet de retrouver les données originales.
- *     - accélération du traitement des colonnes codées (anonymisation).
- *     - traitement avec retenue ou suppression de la ligne d'entête qui precise le contenu des colonnes.
+ *     - test numÃ©riques  sur des colonnes diffÃ©rentes des tests textuels
+ *      avec intervalle de valeurs (utiles pour les code de retour HTTP, les taille en octets des Ã©changes)
+ *     - usage possible d'expressions rÃ©guliÃ¨res comme chaÃ®ne d'exclusion ou de sÃ©lection des lignes
+ *       soit en ligne de commande (paramÃ¨tre s) soit dans les fichiers de valeurs (paramÃ¨tre f)
+ *     - decodage symetrique du codage. Permet de retrouver les donnÃ©es originales.
+ *     - accÃ©lÃ©ration du traitement des colonnes codÃ©es (anonymisation).
+ *     - traitement avec retenue ou suppression de la ligne d'entÃªte qui precise le contenu des colonnes.
  *   gcsv_extrait.php V0.0
  *     - introduction des tests de date/heure
- *     - tous les tests se font sur une colonne précise (et non plus liste de colonnes testées)
- *     - réelle introduction des intervalles
- *     - correction de l agestion de la ligne d'entête.
+ *     - tous les tests se font sur une colonne prÃ©cise (et non plus liste de colonnes testÃ©es)
+ *     - rÃ©elle introduction des intervalles
+ *     - correction de l agestion de la ligne d'entÃªte.
  *  ... V0.1
- *     - les critères de sélection sont cumulatifs sur des colonnes différentes :
+ *     - les critÃ¨res de sÃ©lection sont cumulatifs sur des colonnes diffÃ©rentes :
  *       ... -colt C1 +critere1 -colt C2 +critere2 -colt C -critere3...
- *       pour être retenue, une ligne doit vérifier les deux critères critere1 dans et C1 et critere2 dans
- *       C2 et mais pas critere3 dans C (où C peut être C1 ou C2). Mais plusieurs valeurs sur une même colonne
+ *       pour Ãªtre retenue, une ligne doit vÃ©rifier les deux critÃ¨res critere1 dans et C1 et critere2 dans
+ *       C2 et mais pas critere3 dans C (oÃ¹ C peut Ãªtre C1 ou C2). Mais plusieurs valeurs sur une mÃªme colonne
  *       sont prises comme des alternatives.
  *       ... -colt C1 +critere1 +critere2
  *   ... V0.0
- *  	- amélioration d'analyse des chaînes à exclure ou retenir qui contiennent des caractères non alphanum.
- *  	- utilisation de l'entrée standard pour un usage en pipe possible.
+ *  	- amÃ©lioration d'analyse des chaÃ®nes Ã  exclure ou retenir qui contiennent des caractÃ¨res non alphanum.
+ *  	- utilisation de l'entrÃ©e standard pour un usage en pipe possible.
  *  ... extrait_ezp_logs.php V0.1 (2013.02.06)  :
  *    performance : 55s pour traiter 46300 lignes avec  4336 valeurs validantes et 1 invalidante soit en moyenne
  *    	plus de 1160 tests par ligne.
- *      229s pour traiter 102340 lignes de log avec sélection des lignes ayant un host
- *      parmi 2858 sauf celle contenant en plus la référence à un host exclu puis
- *      explosion d'url, et encodage de login pour les 645 vérifiant les critères.
- * .. V1.2.1 : correction de l'usage avec a_ecriture_ligne
+ *      229s pour traiter 102340 lignes de log avec sÃ©lection des lignes ayant un host
+ *      parmi 2858 sauf celle contenant en plus la rÃ©fÃ©rence Ã  un host exclu puis
+ *      explosion d'url, et encodage de login pour les 645 vÃ©rifiant les critÃ¨res.
+ *
  */
 
 $parametres_possibles = array('-aide','-help','-h',"-test",'+test','-v','-rapport','-status',
@@ -174,16 +174,16 @@ set_format('std',array('/\\.js\\b/','/\\.css\\b/','/\\.gif\\b/','/\\.jpg\\b/','/
 
 
 /**
- * Traitement du contenu d'un fichier descriptif des chaines à retenir/à rejeter.
- * Les chaînes sont mémorisées dans un tableau. La chaîne $marqueur_lignes indique de ne retenir
- * que les lignes contenant cette RegExp et de retirer la chaîne testée pour obtenir la chaîne finale
+ * Traitement du contenu d'un fichier descriptif des chaines Ã  retenir/Ã  rejeter.
+ * Les chaÃ®nes sont mÃ©morisÃ©es dans un tableau. La chaÃ®ne $marqueur_lignes indique de ne retenir
+ * que les lignes contenant cette RegExp et de retirer la chaÃ®ne testÃ©e pour obtenir la chaÃ®ne finale
  * @param $fic string = nom du fichiers
- * @param $marqueur_lignes string = RegExp validant et à suppride d'une ligne pour la retenir dans les
+ * @param $marqueur_lignes string = RegExp validant et Ã  suppride d'une ligne pour la retenir dans les
  * 				cas de fichiers de configuration d'ezproxy (ou autres...)
  * @return array = liste de valeur extraites
  * @uses $echo_test string =  message en trace
  * @uses $echo_err string =  message en trace
- * @uses $err  boolean = présence d'erreur (fichier inconnu)
+ * @uses $err  boolean = prÃ©sence d'erreur (fichier inconnu)
  */
 function traite_fichier ($fic, $marqueur_lignes='') {
 	global $echo_test,$echo_err,$err;
@@ -212,18 +212,18 @@ function traite_fichier ($fic, $marqueur_lignes='') {
 require_once "$libs/codage_bijectif.class.php";
 
 /* -----------------------------------
- * Gestion internes des critères
+ * Gestion internes des critÃ¨res
  * -----------------------------------
- * On gère dans un tableau association associant à un n° ou un nom  de colonne un critère
- * - pour les critères sur chaîne, un critère est une ou plusieurs chaînes cherchable en distingant
- *   les expressions régulières des chaînes brutes pour raison d'efficacité.
- * - pour les critères "numériques", chacun est formé d'un opérateur et d'une ou deux valeurs
+ * On gÃ¨re dans un tableau association associant Ã  un nÂ° ou un nom  de colonne un critÃ¨re
+ * - pour les critÃ¨res sur chaÃ®ne, un critÃ¨re est une ou plusieurs chaÃ®nes cherchable en distingant
+ *   les expressions rÃ©guliÃ¨res des chaÃ®nes brutes pour raison d'efficacitÃ©.
+ * - pour les critÃ¨res "numÃ©riques", chacun est formÃ© d'un opÃ©rateur et d'une ou deux valeurs
  * bornes d'un intervalle
  */
 
 /**
  * ajoute_val_tab_cri
- * ajoute un critère à la colonne $col dans la table qui lui correspond
+ * ajoute un critÃ¨re Ã  la colonne $col dans la table qui lui correspond
  */
 function ajoute_val_tab_cri (&$tab_cri,$col,$critere){
 	global $col_testees,$a_exploser;
@@ -235,8 +235,8 @@ function ajoute_val_tab_cri (&$tab_cri,$col,$critere){
 
 /**
  *
- * Pour toutes les tables indexée par un identifiant de colonne, transforme un nom identifiant
- *  en un numéro de colonne
+ * Pour toutes les tables indexÃ©e par un identifiant de colonne, transforme un nom identifiant
+ *  en un numÃ©ro de colonne
  *  @param array $tab_indexee : tableau dont on convertit les index
  *  @param array $tab_conv : tableau les index sont ceux de l'autre et les valeurs doivent remplacer
  *      ces index.
@@ -258,7 +258,7 @@ function converti_col_index (&$tab_indexee,$tab_conv) {
 }
 /**
  * converti_col_val
- * Pour tous les identifiants nominatifs de colonne, transforme le nom en numéro de colonne.
+ * Pour tous les identifiants nominatifs de colonne, transforme le nom en numÃ©ro de colonne.
  * Si l'argument est un tableau, traite toutes les valeurs du tableau
  *  @param array $col_p_nom : valeur ou tableau de valeurs a convertir
  *  @param array $tab_conv : tableau les index sont ceux de l'autre et les valeurs doivent remplacer
@@ -282,18 +282,18 @@ function converti_col_val (&$col_p_nom,$tab_conv) {
 }
 /*
  * ===============================================================================
- * Critères sur chaîne de caractère.
- * Séparation des critères bruts et utilisant une expression régulière
+ * CritÃ¨res sur chaÃ®ne de caractÃ¨re.
+ * SÃ©paration des critÃ¨res bruts et utilisant une expression rÃ©guliÃ¨re
  * ===============================================================================
  */
 
 /**
  *
- * Ajout de valeurs de critères chaîne dans le tableau des valeur brute ou celui des RegExp.
+ * Ajout de valeurs de critÃ¨res chaÃ®ne dans le tableau des valeur brute ou celui des RegExp.
  * @param array $tab_valstr = liste cible sur laqsuelle se fait l'ajout des valeur brutes
  * @param array $tab_valreg = liste cible sur laqsuelle se fait l'ajout des RegExp
- * @param mixed $col = n° ou nom de la colonne.
- * @param array $vals = liste des valeurs à ajouter
+ * @param mixed $col = nÂ° ou nom de la colonne.
+ * @param array $vals = liste des valeurs Ã  ajouter
  */
 function ajoute_val_str (&$tab_valstr,$col,$vals){
 	if (!is_array($vals)) $vals = array($vals);
@@ -310,18 +310,18 @@ function est_val_reguliere ($v){
 }
 /*
  * ===============================================================================
- * Valeurs numériques et dates mémorisation / normalisation / test
+ * Valeurs numÃ©riques et dates mÃ©morisation / normalisation / test
  * ===============================================================================
  */
 
 /**
  *
- * Ajout d'une valeur numérique de maintient ou de rejet de ligne après l'avoir normalisée.
- * La valeur val est au format préconisé pour la ligne de commande.
+ * Ajout d'une valeur numÃ©rique de maintient ou de rejet de ligne aprÃ¨s l'avoir normalisÃ©e.
+ * La valeur val est au format prÃ©conisÃ© pour la ligne de commande.
  * @param array $tab_val = liste cible sur laqsuelle se fait l'ajout
  * @param string $op = operateur numerique
- * @param string $col = numéro ou nom de la colonne
- * @param array $val = valeur(s) servants à définir le critère
+ * @param string $col = numÃ©ro ou nom de la colonne
+ * @param array $val = valeur(s) servants Ã  dÃ©finir le critÃ¨re
  * @param string $format = format de date
  * @return string=message d'erreur
  */
@@ -360,12 +360,12 @@ function ajoute_val_num (&$tab_val,$op,$col,$val,$format=""){
 
 /**
  * compare_num
- * Mise en oeuvre des critères mémorisés. Rend vrai si la valeur trouvée dans une ligne $val_testee vérifie
- * le critère $rech de la colonne.
+ * Mise en oeuvre des critÃ¨res mÃ©morisÃ©s. Rend vrai si la valeur trouvÃ©e dans une ligne $val_testee vÃ©rifie
+ * le critÃ¨re $rech de la colonne.
  * Pour les dates on normalise en reprojetant sur les
  *
- * @param array $rech : opérateur/type et valeur(s) de définition du test.
- * @param array $val_testee : valeurs à tester. Il suffit d'une valeur valide pour que le test soit positif
+ * @param array $rech : opÃ©rateur/type et valeur(s) de dÃ©finition du test.
+ * @param array $val_testee : valeurs Ã  tester. Il suffit d'une valeur valide pour que le test soit positif
  * @return boolean : resultat du test
  */
 
@@ -405,10 +405,10 @@ $st_mes_dates = array('Y'=>array('1900','2099'),'m'=>array('01','12'),'d'=>array
 
 /**
  * normalise_critere_num
- * Fait d'une valeur textuelle en argument, une valeur numérique à tester
- * @param string $t = type de valeur à traiter
- * @param string $v = valeur à traiter
- * @return mixed = valeur normalisée
+ * Fait d'une valeur textuelle en argument, une valeur numÃ©rique Ã  tester
+ * @param string $t = type de valeur Ã  traiter
+ * @param string $v = valeur Ã  traiter
+ * @return mixed = valeur normalisÃ©e
  */
 function normalise_critere_num($t,$v){
 	global $echo_err,$err,$st_mes_dates;
@@ -510,11 +510,11 @@ function normalise_critere_num($t,$v){
 
 /**
  * normalise_valeur_num
- * Fait d'une valeur lue en log, une valeur numérique à tester
- * @param string $t = type de valeur à traiter
- * @param string $v = valeur à traiter
- * @param string $f = format de date à traiter
- * @return mixed = valeur normalisée
+ * Fait d'une valeur lue en log, une valeur numÃ©rique Ã  tester
+ * @param string $t = type de valeur Ã  traiter
+ * @param string $v = valeur Ã  traiter
+ * @param string $f = format de date Ã  traiter
+ * @return mixed = valeur normalisÃ©e
  */
 //if (!date_default_timezone_set('Europe/London')) die ("Erreur emploi date_default_timezone_set");
 function normalise_valeur_num($t,$v,$f=""){
@@ -544,8 +544,8 @@ function normalise_valeur_num($t,$v,$f=""){
 
 /**
  * valide_bornes_num
- * Sert à corriger deux bornes permettant de définir un intervalle et vérifie la compatibilité entre la
- * valeur théorique minimum et celle maximum
+ * Sert Ã  corriger deux bornes permettant de dÃ©finir un intervalle et vÃ©rifie la compatibilitÃ© entre la
+ * valeur thÃ©orique minimum et celle maximum
  *
  * */
 function valide_bornes_num($type, &$vmin,&$vmax){
@@ -589,13 +589,13 @@ function valide_bornes_num($type, &$vmin,&$vmax){
 }
 
 /**
- * Sert à comparer deux valeurs normalisées de type t, et rendre 1 si v1 < v2 , -1 v2 < v1, 0 en cas d'égalité.
- * Elle se charge aussi de corriger au besoin l'une des valeurs pour établir des valeurs statiques
- * accélérant les processus ultérieurs de comparaison..
- * @param string $type : type de valeur code de l'ensemble ordonné discret du type
+ * Sert Ã  comparer deux valeurs normalisÃ©es de type t, et rendre 1 si v1 < v2 , -1 v2 < v1, 0 en cas d'Ã©galitÃ©.
+ * Elle se charge aussi de corriger au besoin l'une des valeurs pour Ã©tablir des valeurs statiques
+ * accÃ©lÃ©rant les processus ultÃ©rieurs de comparaison..
+ * @param string $type : type de valeur code de l'ensemble ordonnÃ© discret du type
  * 		n pour rationnels t pour date/heure.
- * @param mixed $v1 : première valeur à comparer
- * @param mixed $v2 : seconde valeur à comparer
+ * @param mixed $v1 : premiÃ¨re valeur Ã  comparer
+ * @param mixed $v2 : seconde valeur Ã  comparer
  * @return int : resultat de la comparaison
  *
  */
@@ -616,7 +616,7 @@ function compare_arith_num ($type,$v1,$v2){
         }
         return (0);
 
-	} else { // cas numérique
+	} else { // cas numÃ©rique
 		if ($v1 < $v2) return (1);
 		elseif ($v1>$v2) return(-1);
 		else return(0);
@@ -626,7 +626,7 @@ function compare_arith_num ($type,$v1,$v2){
 
 /**
  *
- * Fonction qui teste la validité de la valeur d'une colonne par rapport aux critères posés
+ * Fonction qui teste la validitÃ© de la valeur d'une colonne par rapport aux critÃ¨res posÃ©s
  * @param unknown_type $vtestee
  * @param unknown_type $nocol
  *
@@ -637,7 +637,7 @@ function valeur_col_valide ($vtestee,$nocol){
 	global $extrait,$extrait_RE,$extrait_num;
 	global $strin;
 	if (!$vtestee && $strin) {return(valeur_col_valide_mess ('SSVAL',$nocol));}
-	if ($filtre_ligne && $nocol!='*') { // il y a des exclusions demandées.
+	if ($filtre_ligne && $nocol!='*') { // il y a des exclusions demandÃ©es.
 		if (isset($filtres[$nocol]) ){
 			$vals = $filtres[$nocol];
 			foreach ($vals as $une_val) {
@@ -663,7 +663,7 @@ function valeur_col_valide ($vtestee,$nocol){
 			}
 		}
 	}
-	if (!$valide_ligne) {return(''); }// il n'y a pas de sélection demandée : c'est bon
+	if (!$valide_ligne) {return(''); }// il n'y a pas de sÃ©lection demandÃ©e : c'est bon
 	$ok = true;
 	if (isset($extrait[$nocol])) {
 		$vals=$extrait[$nocol];
@@ -698,7 +698,7 @@ function valeur_col_valide ($vtestee,$nocol){
 }
 
 /**
- * Calcul du host renversé pour le traitement des URL
+ * Calcul du host renversï¿½ pour le traitement des URL
  */
 function ana_url ($str){
 	$v_url = parse_url($str);
@@ -713,24 +713,24 @@ function ana_url ($str){
 }
 
 /**
- * Calcul de la valeur à écrire en ne conservant que les colonnes requises et en encodant les colonnes
- * désignées
- * @param $tab array = colonnes de la ligne d'origine à écrire
- * @param $col_plus array = liste des colonnes à retenir
- * @param $col_moins array = liste des colonnes à exclure du résultat
+ * Calcul de la valeur Ã  Ã©crire en ne conservant que les colonnes requises et en encodant les colonnes
+ * dÃ©signÃ©es
+ * @param $tab array = colonnes de la ligne d'origine Ã  Ã©crire
+ * @param $col_plus array = liste des colonnes Ã  retenir
+ * @param $col_moins array = liste des colonnes Ã  exclure du rÃ©sultat
  * @param $col_codes array = table associant un nom/num de col au mode d'encodage de celle-ci
- * @param $glu char = séparateur de colonne à utiliser dans la ligne de CSV produite.
- * @param $col_url int = n° (>0) de la colonne la colonne contenant une url à éclater
+ * @param $glu char = sÃ©parateur de colonne Ã  utiliser dans la ligne de CSV produite.
+ * @param $col_url int = nÂ° (>0) de la colonne la colonne contenant une url Ã  Ã©clater
  * @param $col_fixe array = table associant un nom/num de col a la valeur constante a y mettre
- * @param $est_entete boolean = precise qu'il s'agit d'une entête ou non
- * @return mixed = ligne résultat formatée ou tableau des colonnes en erreur si on est en mode strict.
+ * @param $est_entete boolean = precise qu'il s'agit d'une entÃªte ou non
+ * @return mixed = ligne rÃ©sultat formatÃ©e ou tableau des colonnes en erreur si on est en mode strict.
  */
 function ecrit_res_acode (&$tab,$col_plus,$col_moins,$col_codes,$glu=" ",$col_url="",$col_fixe=array(),$est_entete=false){
 	global $strout,$allcol;
 
 	$err_tabs = $vtab = array();
 	$taille_tab_originale = count($tab);
-	// Calcul des colonnes liée à l'analyse d'une URL
+	// Calcul des colonnes liÃ©e Ã  l'analyse d'une URL
 	if ($col_url) {
 		if ($strout && !isset($tab[$col_url-1])) {$err_tabs[]=$col_url;}
 		else {
@@ -807,18 +807,18 @@ require_once "$libs/logs.lib.php";
 
 /*
  * ================================================================================
- * Bloc de gestion des sources entrée standard ou fichier compressé.
+ * Bloc de gestion des sources entrÃ©e standard ou fichier compressÃ©.
  * ================================================================================
 */
 /**
  * @var resource $source_u = surtout utile pour les fichier
- * @var char $mode_u='s' si on utilise l'entrée standard, vide sinon.
+ * @var char $mode_u='s' si on utilise l'entrÃ©e standard, vide sinon.
  *
  */
 $source_u=''; $mode_u = '';
 /**
  *
- * Permet d'ouvrir la source dans le cas d'un fichier. D'établir le mode standard dans le cas de l'entrée
+ * Permet d'ouvrir la source dans le cas d'un fichier. D'Ã©tablir le mode standard dans le cas de l'entrÃ©e
  * standard.
  * @param string $unite = 'stdin' ou chemin du fichier
  * @return resource
@@ -838,13 +838,13 @@ function ouvre_source ($unite){
 }
 /**
  *
- * Rend une ligne lue à la source ...
+ * Rend une ligne lue Ã  la source ...
  * @return string = ligne lue.
  */
 function lit_source (){
 	global $source_u,$mode_u;
 	if ($mode_u=='s') return (fgets(STDIN));
-	else return gzgets($source_u);
+	else return gzgets($source_u,1048576);
 }
 /**
  *
@@ -859,10 +859,10 @@ function ferme_source(){
 }
 
 /**
- * Traitement de la ligne de heaedr qui consiste à établir un lien entre nom de colonne et sa position.
- * Le tableau $conv_colnum est construit lors de l'analyse le commande avec toutes les colonnes désignées.
- * @param string $ligne : chaîne (ligne d'entête ) contenant le format des lignes
- * @return boolean : vrai si OK. sinon étblit la chaîne globale $echo_err.
+ * Traitement de la ligne de heaedr qui consiste Ã  Ã©tablir un lien entre nom de colonne et sa position.
+ * Le tableau $conv_colnum est construit lors de l'analyse le commande avec toutes les colonnes dÃ©signÃ©es.
+ * @param string $ligne : chaÃ®ne (ligne d'entÃªte ) contenant le format des lignes
+ * @return boolean : vrai si OK. sinon Ã©tblit la chaÃ®ne globale $echo_err.
  */
 function  traite_ligne_header ($ligne){
 	global $fres,$frej,$glu,$sep, $mod_col,$ligne_header,$echo_err,$cptecrites;
@@ -870,7 +870,7 @@ function  traite_ligne_header ($ligne){
 	global $colurl,$col_code,$col_exclues,$col_ret,$conv_colnum,$col_fixe,$ecrit_par_col;
 	global $cptlues;
 	  /*
-	   * Si désignation symbolique, conversion des noms de colonnes en n°
+	   * Si dÃ©signation symbolique, conversion des noms de colonnes en nÂ°
 	   */
 	if ($ligne_header == 'i') return (true);
 	$tab_ligne = explose_ligne($ligne, $sep);
@@ -907,7 +907,7 @@ function  traite_ligne_header ($ligne){
 	}
 
 	/*
-	 *  S'il s'agit d'une entete, écriture au besoin de la ligne en resultat
+	 *  S'il s'agit d'une entete, Ã©criture au besoin de la ligne en resultat
 	 *  (sans la traiter comme les suivantes)
 	 */
 
@@ -928,7 +928,7 @@ function  traite_ligne_header ($ligne){
 	if ($frej) gzwrite($frej,$ligne);
 	/*
 	 * Ajustement de $ligne_header pour la suite du traitement :
-	 * Non réplication et présence ou non de cette ligne en début des fichiers suivants à analyser.
+	 * Non rÃ©plication et prÃ©sence ou non de cette ligne en dÃ©but des fichiers suivants Ã  analyser.
 	 */
 	if ($ligne_header=='+1'||$ligne_header=='-1') $ligne_header=false;
 	else $ligne_header='i';
@@ -939,14 +939,14 @@ function  traite_ligne_header ($ligne){
 
 /*
  * ==========================================================================
- * Initialisation des paramètres du traitement
+ * Initialisation des paramÃ¨tres du traitement
  * ==========================================================================
  */
 
 
 
-// mémorisation par colonne
-//  - des éléments discriminants et sélecteur de lignes
+// mÃ©morisation par colonne
+//  - des Ã©lÃ©ments discriminants et sÃ©lecteur de lignes
 $filtres = array();$extrait = array();
 $filtres_RE = array();$extrait_RE = array();
 $filtres_num = array();$extrait_num = array();
@@ -955,20 +955,20 @@ $col_testees = array();
 
 $allcol=$strin=$strout=false;
 
-// - des éléments choisis ou exclus du résultat
+// - des Ã©lÃ©ments choisis ou exclus du rÃ©sultat
 $col_exclues=array();$col_ret=array();
-// - des élément à traiter avant de les produire
+// - des Ã©lÃ©ment Ã  traiter avant de les produire
 $colurl='';$col_code=array(); $col_fixe=array();
-// mode de désignation des colonnes concernées
-//  et table de conversion créé à partir de l'entête conservée ou non
+// mode de dÃ©signation des colonnes concernÃ©es
+//  et table de conversion crÃ©Ã© Ã  partir de l'entÃªte conservÃ©e ou non
 $mod_col = 'num'; $conv_colnum = array(); $ligne_header=''; $format='';
 
 // Limites de traitement : nbre de ligne, duree en secondes
 $maxval = -1; $tmax=-1;
 
-// pour le CSV lu, séparateur et parenthèseurs (en fichier) pour son analyse
+// pour le CSV lu, sÃ©parateur et parenthÃ¨seurs (en fichier) pour son analyse
 $sep="";$fic_par="";
-// pour le CSV produit, séparateur à utiliser.
+// pour le CSV produit, sÃ©parateur Ã  utiliser.
 $glu="";
 
 
@@ -977,14 +977,14 @@ $test=$testp=false; $emploi = false;
 // ... et accumulation des messages de traitement :
 $echo_test = $echo_err =""; $err = false;
 
-// Fichiers utilisés en résultat positif/discriminé
+// Fichiers utilisÃ©s en rÃ©sultat positif/discriminÃ©
 $fic_res=$fic_rej=$fic_par="";
-// ... et fichiers source nécessaire
+// ... et fichiers source nÃ©cessaire
 $sources=array();
 
 /*
  * ==========================================================================
- * Initialisation de l'analyse de la ligne de commande elle-même
+ * Initialisation de l'analyse de la ligne de commande elle-mÃªme
  * ==========================================================================
  */
 
@@ -994,7 +994,7 @@ if (count($argv)<1) {
 	montre_usage();
 }
 
-// mémorisation d'un argument trouvé : argument / signe utilisé / colonne impliquée
+// mÃ©morisation d'un argument trouvÃ© : argument / signe utilisÃ© / colonne impliquÃ©e
 $prochain= "";$signe="";
 $print_etat = false;
 $col_test = '';$format_test = "";
@@ -1164,7 +1164,7 @@ foreach ($argv as $un_arg){
 		if ($test) $echo_test.= message ('argSig',$signe.$v_arg);
 		if ($nettoie_col_test) {$col_test=''; $format_test="";}
 
-	} else { // Ce n'est pas un paramètre
+	} else { // Ce n'est pas un paramÃ¨tre
 		$valeur_requise=false;
 		$entete_valeur = substr($v_arg, 0,1);
 		if ($fut_signe=='.' && ($entete_valeur=='+'||$entete_valeur=='-'))
@@ -1330,7 +1330,7 @@ foreach ($argv as $un_arg){
 								$conv_colnum[$col_test]=-1;
 							}
 
-							// Pour limiter à une seule colonne et détecter la méprise de l'usager
+							// Pour limiter Ã  une seule colonne et dÃ©tecter la mÃ©prise de l'usager
 							$prochain= '';
 							break;
 				case 'colf' :
@@ -1361,7 +1361,7 @@ foreach ($argv as $un_arg){
 							$echo_err .= message ('PrecCOL',$prochain);
 						}
 					} else {
-						if (preg_match("/[^0-9]/", $un_arg)) { //le nom de col comporte un car. non numérique
+						if (preg_match("/[^0-9]/", $un_arg)) { //le nom de col comporte un car. non numÃ©rique
 							$mod_col='nom';
 						}
 						$conv_colnum[$un_arg]=-1;
@@ -1370,7 +1370,7 @@ foreach ($argv as $un_arg){
 					switch ($prochain){
 						case 'colt':
 							$col_test = $un_arg; $format_test="";
-							// Pour limiter à une seule colonne et détecter la méprise de l'usager
+							// Pour limiter Ã  une seule colonne et dÃ©tecter la mÃ©prise de l'usager
 							$prochain= '';
 							break;
 						case 'colurl' :
@@ -1467,7 +1467,7 @@ foreach ($argv as $un_arg){
 					$vals=array($un_arg);
 					break;
 			}
-		} else { // il n'y a pas de paramètre préfixant l'usage de la valeur
+		} else { // il n'y a pas de paramÃ¨tre prÃ©fixant l'usage de la valeur
 			$err=true;
 			$echo_err = message ('quoi',$un_arg);
 			$prochain=$signe="";
@@ -1501,7 +1501,7 @@ foreach ($argv as $un_arg){
 if ($test) error_reporting(15);
 
 
-// séparateurs par défaut au besoin, en entrée et en sortie
+// sÃ©parateurs par dÃ©faut au besoin, en entrÃ©e et en sortie
 $sepaff=$sep;$gluaff=$glucom=$glu;
 if (!$sep) $sep='s';
 if (!$glu) $glu= $sep;
@@ -1533,7 +1533,7 @@ if ($mod_col=='nom') {
 		$err=true;
 		$echo_err = message('Mod_nomINV');
 	}
-		/* Homogénéïsation de la forme du tableau des colonnes particulierement utiles. */
+		/* HomogÃ©nÃ©Ã¯sation de la forme du tableau des colonnes particulierement utiles. */
 } else {
 	foreach ($conv_colnum as $nom=>$nocol){
 		$conv_colnum[$nom]=$nom;
@@ -1542,14 +1542,14 @@ if ($mod_col=='nom') {
 }
 
 
-// accélérateurs des filtrages et écritures :
+// accÃ©lÃ©rateurs des filtrages et Ã©critures :
 $filtre_ligne = ($filtres || $filtres_RE || $filtres_num);
 $valide_ligne = ($extrait || $extrait_RE || $extrait_num);
 $ecrit_par_col = ($col_code || $col_exclues || $col_ret || $glucom || $col_fixe);
 
 
 
-// Affichage du mode de fonctionnement si test demandé ou erreur.
+// Affichage du mode de fonctionnement si test demandÃ© ou erreur.
 if ($test || $err || $print_etat) {
 		$echo_etat = etat_mess ();
 }
@@ -1572,7 +1572,7 @@ if ($print_etat) {
 	$echo_err=$echo_etat=$echo_test=$mess="";
 }
 
-/* Construction des valeurs absolument nécessaires dans la ligne intégrale pour accélérer le rejet
+/* Construction des valeurs absolument nÃ©cessaires dans la ligne intÃ©grale pour accÃ©lÃ©rer le rejet
  * des lignes.
  */
 $pretest_ob = $pretest_RE_ob = array();
@@ -1583,7 +1583,7 @@ foreach ($extrait_RE as $nocol=>$vals){
 	if (count($vals)==1) $pretest_RE_ob[]=$vals[0];
 }
 $pretest_exc = (isset($filtres['*']));$pretest_RE_exc = (isset($filtres_RE['*']));
-// Ouvrage du résultat :
+// Ouvrage du rÃ©sultat :
 if ($fic_res!="") {
 	if ( !$fres=gzopen($fic_res, 'wb')) die (message ('FicResNOP',$fic_res));
 } else $fres=NULL;
@@ -1606,7 +1606,7 @@ if ($tmax > 0) {
 	$timemax=time()+$tmax;
 }
 foreach ($sources as $source) {
-// Ouverture des fichiers source et résultat :
+// Ouverture des fichiers source et rÃ©sultat :
 	if (!ouvre_source($source)) {
 		fprintf(STDERR, "%s",message ('FicSrcNOP',$source)) ;
 		continue;
@@ -1618,7 +1618,7 @@ foreach ($sources as $source) {
 	while (($ligne = lit_source())!==false) {
 		$cptlignefic++;
 		$cptlues++;
-		/* cas de première ligne de fichier à entete */
+		/* cas de premiÃ¨re ligne de fichier Ã  entete */
 		if ($cptlignefic==1 && $ligne_header){
 			if (!traite_ligne_header ($ligne)) {
 				fprintf(STDERR, "%s",$echo_err) ;

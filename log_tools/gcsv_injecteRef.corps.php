@@ -3,17 +3,15 @@
 /**
  *
  * gcsv_injecteRef.php V 0.1
- * Script qui sert à injecter certaines colonnes d'un fichier de référence sur les lignes du flux
- * d'entrée ou des fichiers traités.
- * La détermination de la ligne de référence à utiliser se base sur l'identité de contenu d'une
- * ou plusieurs colonnes désignées comme formant  la clé.
-Si aucun fichier n'est indiqué en source (-src), c'est l'entrée standard qui est utilisée.
-Si aucun fichier n'est indiqué en résultat (-res), c'est la sortie standard qui est utilisée.
+ * Script qui sert Ã  injecter certaines colonnes d'un fichier de rÃ©fÃ©rence sur les lignes du fluxÃ© * d'entrÃ©e ou des fichiers traitÃ©s.Ã© * La dÃ©termination de la ligne de rÃ©fÃ©rence Ã  utiliser se base sur l'identitÃ© de contenu d'une
+ * ou plusieurs colonnes dÃ©signÃ©es comme formant  la clÃ©.
+Si aucun fichier n'est indiquÃ© en source (-src), c'est l'entrÃ©e standard qui est utilisÃ©e.
+Si aucun fichier n'est indiquÃ© en rÃ©sultat (-res), c'est la sortie standard qui est utilisÃ©e.
  *
  *
  *  V0.1 :
- *  	- utilisation de l'entrée standard pour un usage en pipe possible.
- * performance : 2s pour 17970 lignes triees donnant 3613 clés formees de deux de ses colonnes.
+ *  	- utilisation de l'entrÃ©e standard pour un usage en pipe possible.
+ * performance : 2s pour 17970 lignes triees donnant 3613 clÃ©s formees de deux de ses colonnes.
  */
 $parametres_possibles=array('-aide','-help','-h',"-test"
 							,'-max','-tmax'
@@ -32,22 +30,17 @@ require_once "$libs/logs.lib.2.php";
 set_parentheses(array(array('"','"'),array('[',']')));
 
 
-/* Tableau  de couple de caractères utilisés en début et fin de valeur unitaire
- * notamment afin que les valeurs puissent contenir des caratères séparateur
- * ex. cuple [] pour le séparateur ,
- * [Auteur, Marc],[Titre,à virgule],Flammarion,1957
- */
+/* Tableau  de couple de caractÃ¨res utilisÃ©s en dÃ©but et fin de valeur unitaireÃ© * notamment afin que les valeurs puissent contenir des caratÃ¨res sÃ©parateur
+ * ex. cuple [] pour le sÃ©parateur ,Ã© * [Auteur, Marc],[Titre,Ã  virgule],Flammarion,1957Ã© */
 $limites_valeurs = array(array('"','"'),array('[',']'));
 /**
- * Traitement de la ligne de heaedr qui consiste à établir un lien entre nom de colonne et sa position.
- * Le tableau $conv_colnum est construit lors de l'analyse le commande avec toutes les colonnes désignées.
- * @param string $ligne : chaîne (ligne d'entête ) contenant le format des lignes
- * @return boolean : vrai si OK. sinon étblit la chaîne globale $echo_err.
- */
+ * Traitement de la ligne de heaedr qui consiste Ã  Ã©tablir un lien entre nom de colonne et sa position.Ã© * Le tableau $conv_colnum est construit lors de l'analyse le commande avec toutes les colonnes dÃ©signÃ©es.
+ * @param string $ligne : chaÃ®ne (ligne d'entÃªte ) contenant le format des lignes
+ * @return boolean : vrai si OK. sinon Ã©tblit la chaÃ®ne globale $echo_err. Ã© */
 function  traite_ligne_header ($tab_ligne,&$etat_header,&$t_conv){
 	global $echo_err;
 	  /*
-	   * Si désignation symbolique, conversion des noms de colonnes en n°
+	   * Si dÃ©signation symbolique, conversion des noms de colonnes en nÂ°
 	   */
 	$mess_err = "";
 	if ($etat_header == 'i') return (true);
@@ -70,7 +63,7 @@ function  traite_ligne_header ($tab_ligne,&$etat_header,&$t_conv){
 	}
 	/*
 	 * Ajustement de $etat_header pour la suite du traitement :
-	 * Non réplication et présence ou non de cette ligne en début des fichiers suivants à analyser.
+	 * Non rÃ©plication et prÃ©sence ou non de cette ligne en dÃ©but des fichiers suivants Ã  analyser.
 	 */
 	if (substr($etat_header,-1)=='1') $etat_header=false;
 	else $etat_header='i';
@@ -98,10 +91,9 @@ function normalise_cle ($chaine){
 
 /**
  *
- * projete_temps : Conversion d'une chaîne tampon en temps timestamp
- * @param string $chaine_tampon = la chaîne
- * @param string $format = format comme décrit dans strftime (http://fr2.php.net/manual/en/function.strftime.php)
- * @param boolean $tampon = vrai si un tampon (timestamp) est desiré au lieu d'une chaîne normalisée.
+ * projete_temps : Conversion d'une chaÃ®ne tampon en temps timestampÃ© * @param string $chaine_tampon = la chaÃ®ne
+ * @param string $format = format comme dÃ©crit dans strftime (http://fr2.php.net/manual/en/function.strftime.php)
+ * @param boolean $tampon = vrai si un tampon (timestamp) est desirÃ© au lieu d'une chaÃ®ne normalisÃ©e.
  * @return mixed  = si $tampon int = timestamp correspondant sinon string = date AAAA/MM/JJ:hh:mm:ss
  *                 false si erreur
  */
@@ -131,9 +123,9 @@ function projete_temps ($chaine_tampon,$format,$tampon=FALSE){
 
 /**
  * ajoute_val
- * Enter description here ...
- * @param unknown_type $tab_val
- * @param unknown_type $vals
+ * Add the normalized version of a list of values to a normalized list.
+ * @param array $tab_val : set (returned) array of normalized values
+ * @param array $vals : array of values to normalize
  */
 
 function ajoute_val (&$tab_val,$vals){
@@ -143,9 +135,9 @@ function ajoute_val (&$tab_val,$vals){
 }
 /**
  *
- * Fait d'une valeur une RegExp adaptée/normalisée
- * @param string $v = valeur à traitée
- * @return string = valeur normalisée
+ * Fait d'une valeur une RegExp adaptÃ©e/normalisÃ©e
+ * @param string $v = valeur Ã  traitÃ©e
+ * @return string = valeur normalisÃ©e
  */
 function normalise($v){
 	$v = preg_replace(":(\\W):", '\\\\$0', $v);
@@ -212,10 +204,9 @@ if (count($argv)<1) {
 	$err=true;
 }
 
-// ... et du fichier source nécessaire
-$sources=array(); $references=array(); $fic_res="";$fic_resr="";$fic_rej="";$fic_par="";
+// ... et du fichier source nÃ©cessaireÃ©$sources=array(); $references=array(); $fic_res="";$fic_resr="";$fic_rej="";$fic_par="";
 
-// liste des colonnes des fichiers traites, contenant la clé avec le referentiel.
+// liste des colonnes des fichiers traites, contenant la clÃ© avec le referentiel.
 $col_a_tester = array();
 // colonnes du referentiel testees (contenant la cle commune)
 $col_cle_referentiel = array();
@@ -422,7 +413,8 @@ foreach ($argv as $v_arg){
 							$echo_test .= message ('2FicTrait',$un_arg);
 							$err=true;
 						} else {
-							include_once ($un_arg);
+                            /** @noinspection PhpIncludeInspection */
+                            include_once ($un_arg);
 							//$includes[] = $un_arg;
 							$echo_test.= message ('FicTrait',$un_arg);
 						}
@@ -539,7 +531,7 @@ foreach ($argv as $v_arg){
 							$echo_test.= message ('PlsrsDefauts',$un_arg);
 							break;
 						}
-						if (preg_match("/[^0-9]/", $un_arg)) { //le nom de col comporte un car. non numérique
+						if (preg_match("/[^0-9]/", $un_arg)) { //le nom de col comporte un car. non numÃ©rique
 							$mod_col='nom';
 							$col=$un_arg;
 						} else {
@@ -574,7 +566,7 @@ if ($emploi) {
 if ($test) error_reporting(15);
 
 
-// séparateurs par défaut au besoin, en entrée et en sortie
+// sÃ©parateurs par dÃ©faut au besoin, en entrÃ©e et en sortie
 $sepaff=$sep;$gluaff=$glucom=$sep;
 if (!$sep) $sep='s';
 if (!$glu)$glu= $sep;
@@ -610,8 +602,7 @@ if ($mod_col_referentiel=='nom') {
 		$echo_test .= message('hdrOblige');
 		$err=true;
 	}
-		/* Homogénéïsation de la forme du tableau des colonnes particulierement utiles. */
-} else {
+		/* HomogÃ©nÃ©Ã¯sation de la forme du tableau des colonnes particulierement utiles. */Ã©} else {
 	foreach ($conv_colnum_referentiel as $nom=>$nocol){
 		$conv_colnum_referentiel[$nom]=$nom;
 	}
@@ -624,7 +615,7 @@ if ($mod_col=='nom') {
 		$echo_test .= message ('hdOblige');
 		$err=true;
 	}
-		/* Homogénéïsation de la forme du tableau des colonnes particulierement utiles. */
+		/* HomogÃ©nÃ©Ã¯sation de la forme du tableau des colonnes particulierement utiles. */
 } else {
 	foreach ($conv_colnum as $nom=>$nocol){
 		$conv_colnum[$nom]=$nom;
@@ -636,7 +627,7 @@ if ($err) {
 	montre_usage("ERR: ".$echo_test); exit();
 }
 /*
- *  Affichage du mode de fonctionnement si test demandé.
+ *  Affichage du mode de fonctionnement si test demandÃ©.
  */
 $echo_etat = "";
 if ($test || $err) {
@@ -665,8 +656,7 @@ if (!$est_vrai_ref){
 	$interm1 = nom_ext_mem('1');
 	/*
 	 * ===============================================================================
-	 * Lecture des fichiers référence - création d'un fichier intermédiaire a trier
-	 * ===============================================================================
+	 * Lecture des fichiers rÃ©fÃ©rence - crÃ©ation d'un fichier intermÃ©diaire a trierÃ©	 * ===============================================================================
 	 */
 	$f_interm = fopen($interm1, 'w');
 	$a_ajouter_header="";
@@ -683,11 +673,11 @@ if (!$est_vrai_ref){
 	$cptligref=0;
 	foreach ($references as $source) {
 
-	// Ouverture des fichiers source et résultat :
+	// Ouverture des fichiers source et rÃ©sultat :
 		if (!($ps = gzopen($source, 'r'))) die (message ('ErrOuvRef',$source));
 		$cptlignefic = 0;
 		$err = false;
-		while (($ligne = gzgets($ps))!==false) {
+		while (($ligne = gzgets($ps,1048576))!==false) {
 			if ($tmax>0 && time()>$tmax) {
 				$max_atteint=true;
 				fprintf(STDERR, "%s",message('>TpsMax'));
@@ -783,7 +773,7 @@ if (!$est_vrai_ref){
 
 	/*
 	 * ==========================================
-	 *       Tri du fichier intermédiaire
+	 *       Tri du fichier intermÃ©diaire
 	 * ==========================================
 	 */
 	$interm2 = nom_ext_mem('2');
@@ -791,7 +781,7 @@ if (!$est_vrai_ref){
 	unlink ($interm1);
 	/*
 	 * ===========================================================================
-	 * Relecture du fichier trie et création du référentiel en mémoire / en fichier
+	 * Relecture du fichier trie et crÃ©ation du rÃ©fÃ©rentiel en mÃ©moire / en fichier
 	 * ===========================================================================
 	 */
 
@@ -905,11 +895,11 @@ $cptlues= 0; $cptecrites=0;
 $max_atteint=false;
 foreach ($sources as $source) {
 
-// Ouverture des fichiers source et résultat :
+// Ouverture des fichiers source et rÃ©sultat :
 	if (!($ps = gzopen($source, 'r'))) die (message('ImpOuvSrc',$source));
 	$cptlignefic = 0;
 	$err = false;
-	while (($ligne_or = gzgets($ps))!==false) {
+	while (($ligne_or = gzgets($ps,1048576))!==false) {
 		if ($maxval>0 && $cptlues>=$maxval) {$max_atteint=true; break;}
 		if ($tmax>0 && time()>$tmax) {
 			$max_atteint=true;
