@@ -1,0 +1,120 @@
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
+
+  <div id="wrapper">
+    <div id="head">
+      <button id="popout">Nouvelle fenêtre</button>
+      <button id="reset">Réinitialiser</button>
+    </div>
+
+    <div class="form">
+      <div class="field">
+        <label>Titre</label>
+        <input type="text" id="titre"/>
+      </div>
+      <div class="field">
+        <label>URL</label>
+        <input type="text" id="url"/>
+      </div>
+      <div class="field">
+        <label>Donne accès à </label>
+        <input type="text" id="acces"/>
+      </div>
+      <div class="field">
+        <label>Host</label>
+        <input type="text" id="host"/>
+        <div id="proxy-warning"></div>
+        <div id="domain-info"></div>
+      </div>
+
+      <div class="two fields">
+        <div class="field">
+          <label>Path entier</label>
+          <input type="text" id="fullpath"/>
+        </div>
+        <div class="field">
+          <label>Path décomposé</label>
+          <div id="pathparams">
+            <input type="text" class="pathparam" placeholder="Paramètre du path"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="two fields">
+        <div class="field">
+          <label>Query entière</label>
+          <input type="text" id="fullquery"/>
+        </div>
+        <div class="field">
+          <label>Query décomposée</label>
+          <div id="queryparams">
+            <input type="text" class="queryparam" placeholder="Paramètre de la query"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="two fields">
+        <div class="field">
+          <label>Type de ressource</label>
+          <select id="rtype">
+            <option></option>
+            <option value="ARTICLE">ARTICLE</option>
+            <option value="ABS">ABS</option>
+            <option value="TOC">TOC</option>
+            <option value="BOOKSERIE">BOOKSERIE</option>
+            <option value="HANDBOOK">HANDBOOK</option>
+            <option value="REF">REF</option>
+            <option value="ENCYCLOPEDIES">ENCYCLOPEDIES</option>
+            <option value="CODES">CODES</option>
+            <option value="PREVIEW">PREVIEW</option>
+            <option value="BOOKMARK">BOOKMARK</option>
+            <option value="BOOK">BOOK</option>
+            <option value="BOOK_SECTION">BOOK_SECTION</option>
+            <option value="FORMULES">FORMULES</option>
+            <option value="BROCHES">BROCHES</option>
+            <option value="PHD_THESIS">PHD_THESIS</option>
+            <option value="MD_THESIS">MD_THESIS</option>
+            <option value="MASTER_THESIS">MASTER_THESIS</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Format</label>
+          <select id="mime">
+            <option></option>
+            <option value="HTML">HTML</option>
+            <option value="PDF">PDF</option>
+            <option value="MISC">MISC</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two fields">
+        <div class="field">
+          <label>Identifiant(s) de ressource</label>
+          <input type="text" id="identifier"/>
+        </div>
+        <div class="field">
+          <label>UnitID</la bel>
+          <input type="text" id="unitid"/>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Remarque</label>
+        <td><textarea id="remarque" placeholder="Commentaires additionnels"></textarea></td>
+      </div>
+    </div>
+
+    <div><strong>Code wiki</strong> <button id="selectButton">Sélectionner tout</button></div>
+    <textarea id="wikidoc"></textarea>
+  </div>
+
+  <script src="./js/jquery-2.1.3.min.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>

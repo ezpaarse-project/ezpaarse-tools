@@ -1,0 +1,11 @@
+{
+"name" :"Analyse d'URL",
+"description" :"Formulaire d'aide à l'analyse d'URL",
+"version" :"1.0",
+"manifest_version": 2,
+"browser_action":
+  {
+    "default_icon": "img/icon-analogist.png",
+    "default_popup": "page.html"
+  }
+}
