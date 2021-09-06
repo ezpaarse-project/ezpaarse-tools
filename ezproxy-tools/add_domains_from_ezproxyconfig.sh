@@ -29,7 +29,7 @@ done
 if [ $# != 2 ]
 then
     printf "Must have 2 arguments (found $#)\n"
-    usage 
+    usage
     exit 1
 fi
 
@@ -47,7 +47,7 @@ EZPROXY_CONFIG=$1
 MANIFEST=$2
 
 if [[ -f ${EZPROXY_CONFIG} ]]; then
-    cat ${EZPROXY_CONFIG} | grep '^DJ' | sed -e 's/^#\?DJ //' -e 's/http.?:\/\///'| sort -u | jq -R -n '{new_domains:[inputs]}' > ${NEW_DOMAINS}
+    grep -E '^(DJ|D|Domain|DomainJavaScript)\s' ${EZPROXY_CONFIG} | sed -e 's/^[^[:blank:]]*[[:blank:]]*//' -e 's/http.?:\/\///'| sort -u | jq -R -n '{new_domains:[inputs]}' > ${NEW_DOMAINS}
     jq -n 'reduce inputs as $i ({}; . * $i)|.domains=.domains+.new_domains|del(.new_domains)' ${MANIFEST} ${NEW_DOMAINS}
 fi
 
